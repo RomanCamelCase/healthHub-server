@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-04-21-users_table-create.sql"
+  - changeSet:
+      id: 1
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-04-21-roles_table-create.sql"
