@@ -1,6 +1,6 @@
 package com.gmail.romkatsis.healthhubserver.dtos;
 
-public class ErrorResponse {
+public class PlainErrorResponse {
 
     private int statusCode;
 
@@ -8,10 +8,7 @@ public class ErrorResponse {
 
     private String message;
 
-    public ErrorResponse() {
-    }
-
-    public ErrorResponse(int statusCode, String path, String message) {
+    public PlainErrorResponse(int statusCode, String path, String message) {
         this.statusCode = statusCode;
         this.path = path;
         this.message = message;

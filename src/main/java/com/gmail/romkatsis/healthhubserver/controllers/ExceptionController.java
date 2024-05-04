@@ -1,6 +1,6 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
-import com.gmail.romkatsis.healthhubserver.dtos.ErrorResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.PlainErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -13,8 +13,11 @@ public class ExceptionController {
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleAuthenticationError(AuthenticationException exception, HttpServletRequest request) {
-        return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), request.getServletPath(), exception.getMessage());
+    public PlainErrorResponse handleAuthenticationError(AuthenticationException exception, HttpServletRequest request) {
+        return new PlainErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                request.getServletPath(),
+                exception.getMessage());
     }
 
 }
