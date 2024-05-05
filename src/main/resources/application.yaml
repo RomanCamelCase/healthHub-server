@@ -12,6 +12,9 @@ spring:
     hibernate:
       ddl-auto: validate
 
+  web:
+    locale: en
+
 auth:
   tokens:
     access-token:
