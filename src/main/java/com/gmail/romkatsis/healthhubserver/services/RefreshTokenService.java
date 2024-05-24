@@ -38,7 +38,7 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = InvalidTokenException.class)
     public User verifyToken(String token) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token).orElseThrow(() ->
                 new InvalidTokenException("Unable to validate refresh token"));
