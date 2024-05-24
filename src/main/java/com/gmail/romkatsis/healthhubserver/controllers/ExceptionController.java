@@ -2,6 +2,7 @@ package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.PlainErrorResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.ValidationErrorResponse;
+import com.gmail.romkatsis.healthhubserver.exceptions.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -56,6 +57,16 @@ public class ExceptionController {
                 "Cannot read request content");
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public PlainErrorResponse handleResourceNotFoundError(RuntimeException exception,
+                                                          HttpServletRequest request) {
+        return new PlainErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                request.getServletPath(),
+                exception.getMessage());
+    }
+
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public PlainErrorResponse handleUnexpectedError(HttpServletRequest request) {
@@ -64,4 +75,5 @@ public class ExceptionController {
                 request.getServletPath(),
                 "An internal server error occurred");
     }
+
 }

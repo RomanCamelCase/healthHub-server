@@ -21,7 +21,6 @@ auth:
       secret: ${ACCESS_TOKEN_SECRET}
       duration: 900000
     refresh-token:
-      secret: ${REFRESH_TOKEN_SECRET}
       duration: 172800000
 
 ---

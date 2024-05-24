@@ -13,7 +13,7 @@ public class LoginRequest {
     private String email;
 
     @NotBlank
-    @Size(min = 8, max = 68)
+    @Size(min = 8, max = 128)
     @Pattern(regexp = "^[A-Za-z0-9]*$")
     private String password;
 

@@ -7,11 +7,11 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.util.Collection;
 import java.util.Date;
 
 @Component
@@ -20,36 +20,24 @@ public class JwtUtils {
 
     private final int accessTokenDuration;
 
-    private final SecretKey refreshSecretKey;
-
-    private final int refreshTokenDuration;
-
     @Autowired
     public JwtUtils(@Value("${auth.tokens.access-token.secret}") String accessTokenSecret,
-                    @Value("${auth.tokens.access-token.duration}") int accessTokenDuration,
-                    @Value("${auth.tokens.refresh-token.secret}") String refreshTokenSecret,
-                    @Value("${auth.tokens.refresh-token.duration}") int refreshTokenDuration) {
-
+                    @Value("${auth.tokens.access-token.duration}") int accessTokenDuration) {
         this.accessSecretKey = generateKey(accessTokenSecret);
         this.accessTokenDuration = accessTokenDuration;
-
-        this.refreshSecretKey = generateKey(refreshTokenSecret);
-        this.refreshTokenDuration = refreshTokenDuration;
     }
 
     private SecretKey generateKey(String secret) {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
-    public String generateAccessToken(Authentication authentication) {
-        UserDetails user = (UserDetails) authentication.getPrincipal();
-
+    public String generateAccessToken(String userId, Collection<? extends GrantedAuthority> authorities) {
         Date issuedAt = new Date();
         Date expiredAt = new Date(issuedAt.getTime() + accessTokenDuration);
 
         return Jwts.builder()
-                .subject(user.getUsername())
-                .claim("authorities", user.getAuthorities())
+                .subject(userId)
+                .claim("authorities", authorities)
                 .issuedAt(issuedAt)
                 .expiration(expiredAt)
                 .signWith(accessSecretKey)

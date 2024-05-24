@@ -11,3 +11,15 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: "db/changelog/v.1.0/2024-04-21-roles_table-create.sql"
+  - changeSet:
+      id: 2
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-05-23-refresh_tokens_table-create.sql"
+  - changeSet:
+      id: 3
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-05-23-users_table-delete-last_time_online_column.sql"
