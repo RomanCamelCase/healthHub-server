@@ -1,6 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.LoginRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.RefreshTokenRequest;
 import com.gmail.romkatsis.healthhubserver.dtos.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.services.AuthenticationService;
 import jakarta.validation.Valid;
@@ -27,8 +28,8 @@ public class AuthenticationController {
 
     @PostMapping("/refresh-tokens")
     @ResponseStatus(HttpStatus.OK)
-    public TokensResponse refreshTokens(@RequestBody String refreshToken) {
-        return authenticationService.refreshUserTokens(refreshToken);
+    public TokensResponse refreshTokens(@RequestBody RefreshTokenRequest request) {
+        return authenticationService.refreshUserTokens(request.refreshToken());
     }
 
 
