@@ -2,6 +2,7 @@ package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.responses.PlainErrorResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.ValidationErrorResponse;
+import com.gmail.romkatsis.healthhubserver.exceptions.EmailAlreadyRegisteredException;
 import com.gmail.romkatsis.healthhubserver.exceptions.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,16 @@ public class ExceptionController {
                                                           HttpServletRequest request) {
         return new PlainErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
+                request.getServletPath(),
+                exception.getMessage());
+    }
+
+    @ExceptionHandler(EmailAlreadyRegisteredException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public PlainErrorResponse handleEmailAlreadyRegistered(RuntimeException exception,
+                                                           HttpServletRequest request) {
+        return new PlainErrorResponse(
+                HttpStatus.CONFLICT.value(),
                 request.getServletPath(),
                 exception.getMessage());
     }

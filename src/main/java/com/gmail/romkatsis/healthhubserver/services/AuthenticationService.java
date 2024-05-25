@@ -36,21 +36,21 @@ public class AuthenticationService {
                 loginRequest.getEmail(),
                 loginRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        String accessToken = jwtUtils.generateAccessToken(userDetails.getUsername(), userDetails.getAuthorities());
         User user = userService.findUserById(Integer.parseInt(userDetails.getUsername()));
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
-
-        return new TokensResponse(accessToken, refreshToken.getToken());
+        return generateTokensByUser(user);
     }
 
     public TokensResponse refreshUserTokens(String refreshToken) {
         User user = refreshTokenService.verifyToken(refreshToken);
+        return generateTokensByUser(user);
+    }
 
-        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
-        String newAccessToken =
-                jwtUtils.generateAccessToken(user.getId().toString(), user.getRoles());
-        return new TokensResponse(newAccessToken, newRefreshToken.getToken());
+    public TokensResponse generateTokensByUser(User user) {
+        String accessToken = jwtUtils.generateAccessToken(user.getId().toString(), user.getRoles());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+        return new TokensResponse(accessToken, refreshToken.getToken());
+
     }
 }
