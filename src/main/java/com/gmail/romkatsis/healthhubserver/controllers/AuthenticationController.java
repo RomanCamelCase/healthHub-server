@@ -1,8 +1,8 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
-import com.gmail.romkatsis.healthhubserver.dtos.LoginRequest;
-import com.gmail.romkatsis.healthhubserver.dtos.RefreshTokenRequest;
-import com.gmail.romkatsis.healthhubserver.dtos.TokensResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.requests.LoginRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.requests.RefreshTokenRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.services.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

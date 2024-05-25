@@ -1,4 +1,4 @@
-package com.gmail.romkatsis.healthhubserver.dtos;
+package com.gmail.romkatsis.healthhubserver.dtos.requests;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

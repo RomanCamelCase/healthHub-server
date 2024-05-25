@@ -1,7 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.services;
 
-import com.gmail.romkatsis.healthhubserver.dtos.LoginRequest;
-import com.gmail.romkatsis.healthhubserver.dtos.TokensResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.requests.LoginRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.models.RefreshToken;
 import com.gmail.romkatsis.healthhubserver.models.User;
 import com.gmail.romkatsis.healthhubserver.utils.JwtUtils;

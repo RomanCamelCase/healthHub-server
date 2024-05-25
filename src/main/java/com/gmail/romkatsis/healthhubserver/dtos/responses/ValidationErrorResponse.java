@@ -1,4 +1,4 @@
-package com.gmail.romkatsis.healthhubserver.dtos;
+package com.gmail.romkatsis.healthhubserver.dtos.responses;
 
 import java.util.List;
 import java.util.Map;

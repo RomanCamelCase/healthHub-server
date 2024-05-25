@@ -1,7 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
-import com.gmail.romkatsis.healthhubserver.dtos.PlainErrorResponse;
-import com.gmail.romkatsis.healthhubserver.dtos.ValidationErrorResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.PlainErrorResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.ValidationErrorResponse;
 import com.gmail.romkatsis.healthhubserver.exceptions.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
