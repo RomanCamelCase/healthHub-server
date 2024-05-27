@@ -29,3 +29,9 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: "db/changelog/v.1.0/2024-05-26-doctors_details_table-create.sql"
+  - changeSet:
+      id: 5
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-05-27-doctors_details_table-edit-qualification_column-work_with_column.sql"
