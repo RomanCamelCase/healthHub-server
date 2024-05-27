@@ -31,6 +31,8 @@ public class RegistrationRequest {
     @Past
     private LocalDate dateOfBirth;
 
+    public RegistrationRequest() {}
+
     public String getEmail() {
         return email;
     }

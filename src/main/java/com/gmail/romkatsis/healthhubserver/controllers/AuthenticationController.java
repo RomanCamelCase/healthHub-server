@@ -29,8 +29,6 @@ public class AuthenticationController {
     @PostMapping("/refresh-tokens")
     @ResponseStatus(HttpStatus.OK)
     public TokensResponse refreshTokens(@RequestBody RefreshTokenRequest request) {
-        return authenticationService.refreshUserTokens(request.refreshToken());
+        return authenticationService.refreshUserTokens(request.getRefreshToken());
     }
-
-
 }

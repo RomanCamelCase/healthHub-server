@@ -17,6 +17,8 @@ public class LoginRequest {
     @Pattern(regexp = "^[A-Za-z0-9]*$")
     private String password;
 
+    public LoginRequest() {}
+
     public String getEmail() {
         return email;
     }
