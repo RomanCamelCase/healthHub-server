@@ -31,51 +31,51 @@ public class RegistrationRequest {
     @Past
     private LocalDate dateOfBirth;
 
-    public @NotBlank @Size(max = 128) @Email(regexp = "^[A-Za-z0-9]+(\\.[A-Za-z0-9])*@[A-Za-z0-9]{3,}\\.[A-Za-z]{2,}$") String getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(@NotBlank @Size(max = 128) @Email(regexp = "^[A-Za-z0-9]+(\\.[A-Za-z0-9])*@[A-Za-z0-9]{3,}\\.[A-Za-z]{2,}$") String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    public @NotBlank @Size(min = 8, max = 128) @Pattern(regexp = "^[A-Za-z0-9]*$") String getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(@NotBlank @Size(min = 8, max = 128) @Pattern(regexp = "^[A-Za-z0-9]*$") String password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public @NotBlank @Size(min = 2, max = 64) String getFirstName() {
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(@NotBlank @Size(min = 2, max = 64) String firstName) {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    public @NotBlank @Size(min = 2, max = 64) String getLastName() {
+    public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(@NotBlank @Size(min = 2, max = 64) String lastName) {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    public @NotNull Gender getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(@NotNull Gender gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
-    public @NotNull @Past LocalDate getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(@NotNull @Past LocalDate dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 }
