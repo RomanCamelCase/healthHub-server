@@ -7,6 +7,7 @@ import com.gmail.romkatsis.healthhubserver.models.User;
 import com.gmail.romkatsis.healthhubserver.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +19,12 @@ import java.util.Collections;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User findUserById(int id) {
@@ -33,6 +36,7 @@ public class UserService {
     public void saveUser(User user) {
         user.setRegistrationDate(LocalDate.now());
         user.setRoles(Collections.singleton(Role.ROLE_CUSTOMER));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         try {
             userRepository.save(user);

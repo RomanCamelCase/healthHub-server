@@ -1,6 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.requests.RegistrationRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.CurrentUserResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.models.User;
 import com.gmail.romkatsis.healthhubserver.services.AuthenticationService;
@@ -9,6 +10,8 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,5 +37,11 @@ public class UserController {
         User user = modelMapper.map(registrationRequest, User.class);
         userService.saveUser(user);
         return authenticationService.generateTokensByUser(user);
+    }
+
+    @GetMapping("/me")
+    public CurrentUserResponse getCurrentUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findUserById(Integer.parseInt(userDetails.getUsername()));
+        return modelMapper.map(user, CurrentUserResponse.class);
     }
 }
