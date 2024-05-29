@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,7 +34,7 @@ public class UserService {
     @Transactional
     public void saveUser(User user) {
         user.setRegistrationDate(LocalDate.now());
-        user.setRoles(Collections.singleton(Role.ROLE_CUSTOMER));
+        user.addRole(Role.ROLE_CUSTOMER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         try {
@@ -43,5 +42,10 @@ public class UserService {
         } catch (DataIntegrityViolationException exception) {
             throw new EmailAlreadyRegisteredException("Email %s already registered".formatted(user.getEmail()));
         }
+    }
+
+    @Transactional
+    public void updateUser(User user) {
+        userRepository.save(user);
     }
 }

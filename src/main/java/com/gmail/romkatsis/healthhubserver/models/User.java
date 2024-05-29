@@ -5,6 +5,8 @@ import com.gmail.romkatsis.healthhubserver.enums.Role;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -128,6 +130,14 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public void addRole(Role role) {
+        if (this.roles == null) {
+            this.roles = new HashSet<>(Collections.singleton(role));
+            return;
+        }
+        this.roles.add(role);
     }
 
     @Override

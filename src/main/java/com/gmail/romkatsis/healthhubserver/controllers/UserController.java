@@ -1,6 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.requests.RegistrationRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.requests.UpdateUserInfoRequest;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.CurrentUserResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.models.User;
@@ -40,8 +41,19 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public CurrentUserResponse getCurrentUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
+    @ResponseStatus(HttpStatus.OK)
+    public CurrentUserResponse getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserById(Integer.parseInt(userDetails.getUsername()));
+        return modelMapper.map(user, CurrentUserResponse.class);
+    }
+
+    @PutMapping("/me")
+    @ResponseStatus(HttpStatus.OK)
+    public CurrentUserResponse editUserInfo(@AuthenticationPrincipal UserDetails userDetails,
+                                            @RequestBody @Valid UpdateUserInfoRequest updateUserInfoRequest) {
+        User user = userService.findUserById(Integer.parseInt(userDetails.getUsername()));
+        modelMapper.map(updateUserInfoRequest, user);
+        userService.updateUser(user);
         return modelMapper.map(user, CurrentUserResponse.class);
     }
 }
