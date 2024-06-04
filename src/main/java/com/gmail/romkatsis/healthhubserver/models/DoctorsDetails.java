@@ -4,6 +4,7 @@ import com.gmail.romkatsis.healthhubserver.enums.DoctorQualificationCategory;
 import com.gmail.romkatsis.healthhubserver.enums.PatientType;
 import jakarta.persistence.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -55,6 +56,16 @@ public class DoctorsDetails {
 
     @ManyToMany(mappedBy = "savedDoctors")
     private Set<User> savedByUsers = new HashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "doctors_working_hours",
+            joinColumns = {@JoinColumn(name = "doctor_id")})
+    private Set<WorkingDay> workingDays = new HashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "doctors_contacts",
+            joinColumns = {@JoinColumn(name = "doctor_id")})
+    private Set<Contact> contacts = new HashSet<>();
 
     public DoctorsDetails() {
     }
@@ -155,13 +166,46 @@ public class DoctorsDetails {
         this.savedByUsers = savedByUsers;
     }
 
+    public Set<WorkingDay> getWorkingDays() {
+        return workingDays;
+    }
+
+    public void setWorkingDays(Set<WorkingDay> workingDays) {
+        this.workingDays = workingDays;
+    }
+
+    public Set<Contact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(Set<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
     public void addSpecialisation(DoctorsSpecialisation specialisation) {
-        doctorsSpecialisations.add(specialisation);
+        this.doctorsSpecialisations.add(specialisation);
         specialisation.getDoctors().add(this);
     }
 
     public void removeSpecialisation(DoctorsSpecialisation specialisation) {
-        doctorsSpecialisations.remove(specialisation);
+        this.doctorsSpecialisations.remove(specialisation);
         specialisation.getDoctors().remove(this);
+    }
+
+    public void addOrUpdateWorkingDay(WorkingDay workingDay) {
+        this.workingDays.removeIf(day -> day.getDayOfWeek().equals(workingDay.getDayOfWeek()));
+        this.workingDays.add(workingDay);
+    }
+
+    public void removeWorkingDayByDayOfWeek(DayOfWeek dayOfWeek) {
+        this.workingDays.removeIf(workingDay -> workingDay.getDayOfWeek().equals(dayOfWeek));
+    }
+
+    public void addContact(Contact contact) {
+        this.contacts.add(contact);
+    }
+
+    public void deleteContactById(int contactId) {
+        this.contacts.removeIf(contact -> contact.getId() == contactId);
     }
 }

@@ -53,3 +53,15 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: "db/changelog/v.1.0/2024-06-03-saved_doctors_table-create.sql"
+  - changeSet:
+      id: 9
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-04-doctors_working_hours-create.sql"
+  - changeSet:
+      id: 10
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-04-doctors_contacts-create.sql"
