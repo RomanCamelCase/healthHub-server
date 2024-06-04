@@ -20,7 +20,7 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/log-in")
     @ResponseStatus(HttpStatus.OK)
     public TokensResponse login(@RequestBody @Valid LoginRequest loginRequest) {
         return authenticationService.authenticate(loginRequest);

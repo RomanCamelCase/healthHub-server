@@ -35,3 +35,21 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: "db/changelog/v.1.0/2024-05-27-doctors_details_table-edit-qualification_column-work_with_column.sql"
+  - changeSet:
+      id: 6
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-05-29-doctors_specialisations_types_table-create.sql"
+  - changeSet:
+      id: 7
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-05-29-doctors_specialisations_table-create.sql"
+  - changeSet:
+      id: 8
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-03-saved_doctors_table-create.sql"

@@ -5,7 +5,6 @@ import com.gmail.romkatsis.healthhubserver.enums.Role;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,20 +43,19 @@ public class User {
     @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    private DoctorsDetails doctorsDetails;
+
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(name = "saved_doctors",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "doctor_id")}
+            )
+    private Set<DoctorsDetails> savedDoctors = new HashSet<>();
 
     public User() {
-    }
-
-    public User(String email, String password, String firstName, String lastName, Gender gender, LocalDate birthDate, LocalDate registrationDate, Set<Role> roles) {
-        this.email = email;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.gender = gender;
-        this.birthDate = birthDate;
-        this.registrationDate = registrationDate;
-        this.roles = roles;
     }
 
     public Integer getId() {
@@ -132,12 +130,39 @@ public class User {
         this.roles = roles;
     }
 
+    public DoctorsDetails getDoctorsDetails() {
+        return doctorsDetails;
+    }
+
+    public Set<DoctorsDetails> getSavedDoctors() {
+        return savedDoctors;
+    }
+
+    public void setSavedDoctors(Set<DoctorsDetails> savedDoctors) {
+        this.savedDoctors = savedDoctors;
+    }
+
+    public void setDoctorsDetails(DoctorsDetails doctorsDetails) {
+        this.doctorsDetails = doctorsDetails;
+    }
+
     public void addRole(Role role) {
-        if (this.roles == null) {
-            this.roles = new HashSet<>(Collections.singleton(role));
-            return;
-        }
         this.roles.add(role);
+    }
+
+    public void addDoctorsDetails(DoctorsDetails doctorsDetails) {
+        this.doctorsDetails = doctorsDetails;
+        doctorsDetails.setUser(this);
+    }
+
+    public void addSavedDoctor(DoctorsDetails savedDoctor) {
+        this.savedDoctors.add(savedDoctor);
+        savedDoctor.getSavedByUsers().add(this);
+    }
+
+    public void removeSavedDoctor(DoctorsDetails savedDoctor) {
+        this.savedDoctors.remove(savedDoctor);
+        savedDoctor.getSavedByUsers().remove(this);
     }
 
     @Override

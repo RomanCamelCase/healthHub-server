@@ -5,6 +5,8 @@ import com.gmail.romkatsis.healthhubserver.enums.PatientType;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "doctors_details")
@@ -18,6 +20,12 @@ public class DoctorsDetails {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     @MapsId
     private User user;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "doctors_specialisations",
+            joinColumns = {@JoinColumn(name = "doctor_id")},
+            inverseJoinColumns = {@JoinColumn(name = "specialisation_id")})
+    private Set<DoctorsSpecialisation> doctorsSpecialisations = new HashSet<>();
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
@@ -45,6 +53,9 @@ public class DoctorsDetails {
     @Column(name = "google_maps_place_id")
     private String googleMapsPlaceId;
 
+    @ManyToMany(mappedBy = "savedDoctors")
+    private Set<User> savedByUsers = new HashSet<>();
+
     public DoctorsDetails() {
     }
 
@@ -62,6 +73,14 @@ public class DoctorsDetails {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<DoctorsSpecialisation> getDoctorsSpecialisations() {
+        return doctorsSpecialisations;
+    }
+
+    public void setDoctorsSpecialisations(Set<DoctorsSpecialisation> doctorsSpecialisations) {
+        this.doctorsSpecialisations = doctorsSpecialisations;
     }
 
     public boolean isActive() {
@@ -126,5 +145,23 @@ public class DoctorsDetails {
 
     public void setGoogleMapsPlaceId(String googleMapsPlaceId) {
         this.googleMapsPlaceId = googleMapsPlaceId;
+    }
+
+    public Set<User> getSavedByUsers() {
+        return savedByUsers;
+    }
+
+    public void setSavedByUsers(Set<User> savedByUsers) {
+        this.savedByUsers = savedByUsers;
+    }
+
+    public void addSpecialisation(DoctorsSpecialisation specialisation) {
+        doctorsSpecialisations.add(specialisation);
+        specialisation.getDoctors().add(this);
+    }
+
+    public void removeSpecialisation(DoctorsSpecialisation specialisation) {
+        doctorsSpecialisations.remove(specialisation);
+        specialisation.getDoctors().remove(this);
     }
 }
