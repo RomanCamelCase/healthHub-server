@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -64,7 +63,7 @@ public class DoctorsDetails {
     private Set<WorkingDay> workingDays = new HashSet<>();
 
     @OneToMany(mappedBy = "doctorsDetails", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Contact> contacts = new HashSet<>();
+    private Set<DoctorsContact> contacts = new HashSet<>();
 
     public DoctorsDetails() {
     }
@@ -173,11 +172,11 @@ public class DoctorsDetails {
         this.workingDays = workingDays;
     }
 
-    public Set<Contact> getContacts() {
+    public Set<DoctorsContact> getContacts() {
         return contacts;
     }
 
-    public void setContacts(Set<Contact> contacts) {
+    public void setContacts(Set<DoctorsContact> contacts) {
         this.contacts = contacts;
     }
 
@@ -200,13 +199,13 @@ public class DoctorsDetails {
         this.workingDays.removeIf(workingDay -> workingDay.getDayOfWeek().equals(dayOfWeek));
     }
 
-    public void addContact(Contact contact) {
+    public void addContact(DoctorsContact contact) {
         this.contacts.add(contact);
         contact.setDoctorsDetails(this);
     }
 
     public void deleteContactById(int contactId) {
-        Contact contact = this.contacts.stream().
+        DoctorsContact contact = this.contacts.stream().
                 filter(cntct -> cntct.getId() == contactId).findFirst().orElse(null);
         if (contact != null) {
             this.contacts.remove(contact);

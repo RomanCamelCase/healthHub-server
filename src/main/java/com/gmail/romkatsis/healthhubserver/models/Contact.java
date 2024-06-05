@@ -1,12 +1,10 @@
 package com.gmail.romkatsis.healthhubserver.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gmail.romkatsis.healthhubserver.enums.ContactType;
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "doctors_contacts")
-public class Contact {
+@MappedSuperclass
+public abstract class Contact {
 
     @Column(name = "contact_id")
     @Id
@@ -19,11 +17,6 @@ public class Contact {
 
     @Column(name = "value")
     private String value;
-
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "doctor_id")
-    private DoctorsDetails doctorsDetails;
 
     public Contact() {
     }
@@ -50,13 +43,5 @@ public class Contact {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public DoctorsDetails getDoctorsDetails() {
-        return doctorsDetails;
-    }
-
-    public void setDoctorsDetails(DoctorsDetails doctorsDetails) {
-        this.doctorsDetails = doctorsDetails;
     }
 }

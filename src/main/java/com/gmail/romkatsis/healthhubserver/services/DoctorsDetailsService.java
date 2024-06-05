@@ -2,7 +2,7 @@ package com.gmail.romkatsis.healthhubserver.services;
 
 import com.gmail.romkatsis.healthhubserver.enums.Role;
 import com.gmail.romkatsis.healthhubserver.exceptions.ResourceNotFoundException;
-import com.gmail.romkatsis.healthhubserver.models.Contact;
+import com.gmail.romkatsis.healthhubserver.models.DoctorsContact;
 import com.gmail.romkatsis.healthhubserver.models.DoctorsDetails;
 import com.gmail.romkatsis.healthhubserver.models.User;
 import com.gmail.romkatsis.healthhubserver.models.WorkingDay;
@@ -39,14 +39,14 @@ public class DoctorsDetailsService {
     }
 
     @Transactional
-    public Set<Contact> addDoctorsContact(int id, Contact contact) {
+    public Set<DoctorsContact> addDoctorsContact(int id, DoctorsContact contact) {
         DoctorsDetails doctorsDetails = findDoctorsDetailsById(id);
         doctorsDetails.addContact(contact);
         return doctorsDetails.getContacts();
     }
 
     @Transactional
-    public Set<Contact> deleteDoctorsContact(int id, int contactId) {
+    public Set<DoctorsContact> deleteDoctorsContact(int id, int contactId) {
         DoctorsDetails doctorsDetails = findDoctorsDetailsById(id);
         doctorsDetails.deleteContactById(contactId);
         return doctorsDetails.getContacts();

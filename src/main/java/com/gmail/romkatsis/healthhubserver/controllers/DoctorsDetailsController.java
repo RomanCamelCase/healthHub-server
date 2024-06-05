@@ -3,7 +3,6 @@ package com.gmail.romkatsis.healthhubserver.controllers;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.ContactRequest;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.DoctorsDetailsRequest;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.DoctorsStatusRequest;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.ContactResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorsDetailsResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.models.*;
@@ -94,15 +93,15 @@ public class DoctorsDetailsController {
     @PostMapping("/{id}/contacts")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("#id == new Integer(principal.username)")
-    public Set<Contact> addDoctorsContact(@RequestBody @Valid ContactRequest contactRequest,
-                                          @PathVariable int id) {
-        return doctorsDetailsService.addDoctorsContact(id, modelMapper.map(contactRequest, Contact.class));
+    public Set<DoctorsContact> addDoctorsContact(@RequestBody @Valid ContactRequest contactRequest,
+                                                 @PathVariable int id) {
+        return doctorsDetailsService.addDoctorsContact(id, modelMapper.map(contactRequest, DoctorsContact.class));
     }
 
     @DeleteMapping("/{id}/contacts")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("#id == new Integer(principal.username)")
-    public Set<Contact> deleteDoctorsContact(@PathVariable int id, @RequestParam int contactId) {
+    public Set<DoctorsContact> deleteDoctorsContact(@PathVariable int id, @RequestParam int contactId) {
         return doctorsDetailsService.deleteDoctorsContact(id, contactId);
     }
 
