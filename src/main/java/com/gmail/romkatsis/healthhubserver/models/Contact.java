@@ -1,18 +1,16 @@
 package com.gmail.romkatsis.healthhubserver.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gmail.romkatsis.healthhubserver.enums.ContactType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import org.hibernate.annotations.Generated;
-import org.hibernate.generator.EventType;
+import jakarta.persistence.*;
 
-@Embeddable
+@Entity
+@Table(name = "doctors_contacts")
 public class Contact {
 
-    @Column(name = "contact_id", unique = true, nullable = false)
-    @Generated(event = EventType.INSERT)
+    @Column(name = "contact_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "type", nullable = false)
@@ -21,6 +19,11 @@ public class Contact {
 
     @Column(name = "value")
     private String value;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private DoctorsDetails doctorsDetails;
 
     public Contact() {
     }
@@ -47,5 +50,13 @@ public class Contact {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public DoctorsDetails getDoctorsDetails() {
+        return doctorsDetails;
+    }
+
+    public void setDoctorsDetails(DoctorsDetails doctorsDetails) {
+        this.doctorsDetails = doctorsDetails;
     }
 }

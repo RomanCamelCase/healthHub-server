@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public CurrentUserResponse editUserInfo(@AuthenticationPrincipal UserDetails userDetails,
                                             @RequestBody @Valid UpdateUserInfoRequest updateUserInfoRequest) {
         User user = userService.findUserById(Integer.parseInt(userDetails.getUsername()));
@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @PostMapping("/saved-doctors/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.CREATED)
     public void addSavedDoctor(@PathVariable int id,
                                @AuthenticationPrincipal UserDetails userDetails) {
         userService.addDoctorToSaved(Integer.parseInt(userDetails.getUsername()), id);

@@ -1,12 +1,12 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
+import com.gmail.romkatsis.healthhubserver.dtos.requests.ContactRequest;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.DoctorsDetailsRequest;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.DoctorsStatusRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.ContactResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorsDetailsResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
-import com.gmail.romkatsis.healthhubserver.models.DoctorsDetails;
-import com.gmail.romkatsis.healthhubserver.models.DoctorsSpecialisation;
-import com.gmail.romkatsis.healthhubserver.models.User;
+import com.gmail.romkatsis.healthhubserver.models.*;
 import com.gmail.romkatsis.healthhubserver.services.AuthenticationService;
 import com.gmail.romkatsis.healthhubserver.services.DoctorsDetailsService;
 import com.gmail.romkatsis.healthhubserver.services.DoctorsSpecialisationService;
@@ -20,7 +20,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DayOfWeek;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -79,7 +81,7 @@ public class DoctorsDetailsController {
     }
 
     @PatchMapping("/{id}/status")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("#id == new Integer(principal.username)")
     public DoctorsDetailsResponse updateDoctorsDetailsStatus(@PathVariable int id,
                                                              @RequestBody @Valid DoctorsStatusRequest request) {
@@ -87,6 +89,36 @@ public class DoctorsDetailsController {
         doctorsDetails.setActive(request.isActive());
         doctorsDetailsService.editDoctorDetails(doctorsDetails);
         return convertDoctorsDetailsToDoctorsDetailsPublicResponse(doctorsDetails);
+    }
+
+    @PostMapping("/{id}/contacts")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("#id == new Integer(principal.username)")
+    public Set<Contact> addDoctorsContact(@RequestBody @Valid ContactRequest contactRequest,
+                                          @PathVariable int id) {
+        return doctorsDetailsService.addDoctorsContact(id, modelMapper.map(contactRequest, Contact.class));
+    }
+
+    @DeleteMapping("/{id}/contacts")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#id == new Integer(principal.username)")
+    public Set<Contact> deleteDoctorsContact(@PathVariable int id, @RequestParam int contactId) {
+        return doctorsDetailsService.deleteDoctorsContact(id, contactId);
+    }
+
+    @PostMapping("/{id}/working-days")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("#id == new Integer(principal.username)")
+    public Set<WorkingDay> addWorkingDay(@PathVariable int id,
+                                         @RequestBody @Valid WorkingDay workingDay) {
+        return doctorsDetailsService.addWorkingDay(id, workingDay);
+    }
+
+    @DeleteMapping("/{id}/working-days")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#id == new Integer(principal.username)")
+    public Set<WorkingDay> deleteDoctorsWorkingDay(@PathVariable int id, @RequestParam DayOfWeek dayOfWeek) {
+        return doctorsDetailsService.deleteDoctorsWorkingDay(id, dayOfWeek);
     }
 
     private DoctorsDetails convertDoctorsDetailsRequestToDoctorsDetails(DoctorsDetailsRequest request) {
