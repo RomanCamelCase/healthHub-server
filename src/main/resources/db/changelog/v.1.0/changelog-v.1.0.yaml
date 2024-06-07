@@ -71,3 +71,69 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: "db/changelog/v.1.0/2024-06-05-doctors_working_hours_table-edit-day_of_week_column.sql"
+  - changeSet:
+      id: 12
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-06-clinics_table-create.sql"
+  - changeSet:
+      id: 13
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-06-clinics_specialisations_types_table-create.sql"
+  - changeSet:
+      id: 14
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-06-clinics_specialisations_table-create.sql"
+  - changeSet:
+      id: 15
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-06-clinics_working_hours-create.sql"
+  - changeSet:
+      id: 16
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-06-clinics_working_hours_table-edit-day_of_week_column.sql"
+  - changeSet:
+      id: 17
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-06-clinics_contacts_table-create.sql"
+  - changeSet:
+      id: 18
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-06-clinics_table-add-admin_id_column-secret_code_column.sql"
+  - changeSet:
+      id: 19
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-06-doctors_details_table-add-clinic_id_column.sql"
+  - changeSet:
+      id: 20
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-07-clinics_reviews_table-create.sql"
+  - changeSet:
+      id: 21
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-07-saved_clinics_table-create.sql"
+  - changeSet:
+      id: 22
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-07-doctors_reviews_table-create.sql"

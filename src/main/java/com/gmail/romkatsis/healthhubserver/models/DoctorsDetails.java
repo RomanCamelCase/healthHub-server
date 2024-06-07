@@ -17,19 +17,20 @@ public class DoctorsDetails {
     @Id
     private Integer userId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     @MapsId
     private User user;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(name = "doctors_specialisations",
-            joinColumns = {@JoinColumn(name = "doctor_id")},
-            inverseJoinColumns = {@JoinColumn(name = "specialisation_id")})
+    @JoinTable(
+            name = "doctors_specialisations",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name = "specialisation_id"))
     private Set<DoctorsSpecialisation> doctorsSpecialisations = new HashSet<>();
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive;
+    private Boolean isActive;
 
     @Column(name = "work_with", nullable = false)
     @Enumerated(EnumType.ORDINAL)
@@ -54,16 +55,25 @@ public class DoctorsDetails {
     @Column(name = "google_maps_place_id")
     private String googleMapsPlaceId;
 
-    @ManyToMany(mappedBy = "savedDoctors")
-    private Set<User> savedByUsers = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clinic_id")
+    private Clinic clinic;
 
-    @ElementCollection
-    @CollectionTable(name = "doctors_working_hours",
-            joinColumns = {@JoinColumn(name = "doctor_id")})
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "doctors_working_hours",
+            joinColumns = @JoinColumn(name = "doctor_id")
+    )
     private Set<WorkingDay> workingDays = new HashSet<>();
 
-    @OneToMany(mappedBy = "doctorsDetails", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "doctorsDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DoctorsContact> contacts = new HashSet<>();
+
+    @ManyToMany(mappedBy = "savedDoctors", fetch = FetchType.LAZY)
+    private Set<User> savedByUsers = new HashSet<>();
+
+    @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<DoctorReview> reviews = new HashSet<>();
 
     public DoctorsDetails() {
     }
@@ -92,11 +102,11 @@ public class DoctorsDetails {
         this.doctorsSpecialisations = doctorsSpecialisations;
     }
 
-    public boolean isActive() {
+    public Boolean getActive() {
         return isActive;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         isActive = active;
     }
 
@@ -156,12 +166,12 @@ public class DoctorsDetails {
         this.googleMapsPlaceId = googleMapsPlaceId;
     }
 
-    public Set<User> getSavedByUsers() {
-        return savedByUsers;
+    public Clinic getClinic() {
+        return clinic;
     }
 
-    public void setSavedByUsers(Set<User> savedByUsers) {
-        this.savedByUsers = savedByUsers;
+    public void setClinic(Clinic clinic) {
+        this.clinic = clinic;
     }
 
     public Set<WorkingDay> getWorkingDays() {
@@ -178,6 +188,22 @@ public class DoctorsDetails {
 
     public void setContacts(Set<DoctorsContact> contacts) {
         this.contacts = contacts;
+    }
+
+    public Set<User> getSavedByUsers() {
+        return savedByUsers;
+    }
+
+    public void setSavedByUsers(Set<User> savedByUsers) {
+        this.savedByUsers = savedByUsers;
+    }
+
+    public Set<DoctorReview> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<DoctorReview> reviews) {
+        this.reviews = reviews;
     }
 
     public void addSpecialisation(DoctorsSpecialisation specialisation) {
@@ -204,9 +230,9 @@ public class DoctorsDetails {
         contact.setDoctorsDetails(this);
     }
 
-    public void deleteContactById(int contactId) {
+    public void removeContactById(int contactId) {
         DoctorsContact contact = this.contacts.stream().
-                filter(cntct -> cntct.getId() == contactId).findFirst().orElse(null);
+                filter(c -> c.getId() == contactId).findFirst().orElse(null);
         if (contact != null) {
             this.contacts.remove(contact);
             contact.setDoctorsDetails(null);

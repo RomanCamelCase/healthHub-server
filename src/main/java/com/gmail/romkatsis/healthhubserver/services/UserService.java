@@ -54,14 +54,14 @@ public class UserService {
     public void addDoctorToSaved(int userId, int doctorId) {
         User user = findUserById(userId);
         DoctorsDetails doctorsDetails = doctorsDetailsService.findDoctorsDetailsById(doctorId);
-        user.addSavedDoctor(doctorsDetails);
+        user.saveDoctor(doctorsDetails);
     }
 
     @Transactional
     public void removeDoctorFromSaved(int userId, int doctorId) {
         User user = findUserById(userId);
         DoctorsDetails doctorsDetails = doctorsDetailsService.findDoctorsDetailsById(doctorId);
-        user.removeSavedDoctor(doctorsDetails);
+        user.removeDoctorFromSaved(doctorsDetails);
     }
 
     public Set<DoctorsDetails> getSavedDoctorsByUserId(int userId) {

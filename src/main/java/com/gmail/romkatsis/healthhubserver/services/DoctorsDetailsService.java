@@ -48,7 +48,7 @@ public class DoctorsDetailsService {
     @Transactional
     public Set<DoctorsContact> deleteDoctorsContact(int id, int contactId) {
         DoctorsDetails doctorsDetails = findDoctorsDetailsById(id);
-        doctorsDetails.deleteContactById(contactId);
+        doctorsDetails.removeContactById(contactId);
         return doctorsDetails.getContacts();
     }
 

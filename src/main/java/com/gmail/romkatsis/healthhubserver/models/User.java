@@ -40,20 +40,38 @@ public class User {
     private LocalDate registrationDate;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(
+            name = "roles",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private DoctorsDetails doctorsDetails;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "saved_doctors",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "doctor_id")}
-            )
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+            name = "saved_doctors",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "doctor_id")
+    )
     private Set<DoctorsDetails> savedDoctors = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+            name = "saved_clinics",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "clinic_id")
+            )
+    private Set<Clinic> savedClinics = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<DoctorReview> doctorsReviews = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ClinicReview> clinicReviews = new HashSet<>();
 
     public User() {
     }
@@ -146,6 +164,30 @@ public class User {
         this.doctorsDetails = doctorsDetails;
     }
 
+    public Set<Clinic> getSavedClinics() {
+        return savedClinics;
+    }
+
+    public void setSavedClinics(Set<Clinic> savedClinics) {
+        this.savedClinics = savedClinics;
+    }
+
+    public Set<DoctorReview> getDoctorsReviews() {
+        return doctorsReviews;
+    }
+
+    public void setDoctorsReviews(Set<DoctorReview> doctorsReviews) {
+        this.doctorsReviews = doctorsReviews;
+    }
+
+    public Set<ClinicReview> getClinicReviews() {
+        return clinicReviews;
+    }
+
+    public void setClinicReviews(Set<ClinicReview> clinicReviews) {
+        this.clinicReviews = clinicReviews;
+    }
+
     public void addRole(Role role) {
         this.roles.add(role);
     }
@@ -155,14 +197,34 @@ public class User {
         doctorsDetails.setUser(this);
     }
 
-    public void addSavedDoctor(DoctorsDetails savedDoctor) {
+    public void saveDoctor(DoctorsDetails savedDoctor) {
         this.savedDoctors.add(savedDoctor);
         savedDoctor.getSavedByUsers().add(this);
     }
 
-    public void removeSavedDoctor(DoctorsDetails savedDoctor) {
+    public void removeDoctorFromSaved(DoctorsDetails savedDoctor) {
         this.savedDoctors.remove(savedDoctor);
         savedDoctor.getSavedByUsers().remove(this);
+    }
+
+    public void saveClinic(Clinic clinic) {
+        this.savedClinics.add(clinic);
+        clinic.getSavedByUsers().add(this);
+    }
+
+    public void removeClinicFromSaved(Clinic clinic) {
+        this.savedClinics.remove(clinic);
+        clinic.getSavedByUsers().remove(this);
+    }
+
+    public void addDoctorReview(DoctorReview doctorReview) {
+        this.doctorsReviews.add(doctorReview);
+        doctorReview.getDoctor().getReviews().add(doctorReview);
+    }
+
+    public void addClinicReview(ClinicReview clinicReview) {
+        this.clinicReviews.add(clinicReview);
+        clinicReview.getClinic().getReviews().add(clinicReview);
     }
 
     @Override
