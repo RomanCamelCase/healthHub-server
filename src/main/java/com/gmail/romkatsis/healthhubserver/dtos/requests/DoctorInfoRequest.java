@@ -2,12 +2,10 @@ package com.gmail.romkatsis.healthhubserver.dtos.requests;
 
 import com.gmail.romkatsis.healthhubserver.enums.DoctorQualificationCategory;
 import com.gmail.romkatsis.healthhubserver.enums.PatientType;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 public class DoctorInfoRequest {
 
@@ -29,9 +27,6 @@ public class DoctorInfoRequest {
     @NotNull
     @Size(min = 2, max = 128)
     private String address;
-
-    @NotEmpty
-    private Set<Integer> specialisations;
 
     public DoctorInfoRequest() {
     }
@@ -82,13 +77,5 @@ public class DoctorInfoRequest {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public Set<Integer> getSpecialisations() {
-        return specialisations;
-    }
-
-    public void setSpecialisations(Set<Integer> specialisations) {
-        this.specialisations = specialisations;
     }
 }

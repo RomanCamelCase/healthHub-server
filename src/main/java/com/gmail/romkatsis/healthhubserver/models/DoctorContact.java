@@ -8,14 +8,14 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "doctors_contacts")
-public class DoctorsContact extends Contact{
+public class DoctorContact extends Contact {
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private DoctorsDetails doctorsDetails;
 
-    public DoctorsContact() {
+    public DoctorContact() {
     }
 
     public DoctorsDetails getDoctorsDetails() {

@@ -4,7 +4,6 @@ import com.gmail.romkatsis.healthhubserver.enums.DoctorQualificationCategory;
 import com.gmail.romkatsis.healthhubserver.enums.PatientType;
 import jakarta.persistence.*;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,13 +20,6 @@ public class DoctorsDetails {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     @MapsId
     private User user;
-
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "doctors_specialisations",
-            joinColumns = @JoinColumn(name = "doctor_id"),
-            inverseJoinColumns = @JoinColumn(name = "specialisation_id"))
-    private Set<DoctorsSpecialisation> doctorsSpecialisations = new HashSet<>();
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
@@ -59,6 +51,14 @@ public class DoctorsDetails {
     @JoinColumn(name = "clinic_id")
     private Clinic clinic;
 
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "doctors_specialisations",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name = "specialisation_id")
+    )
+    private Set<DoctorSpecialisation> specialisations = new HashSet<>();
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "doctors_working_hours",
@@ -67,7 +67,7 @@ public class DoctorsDetails {
     private Set<WorkingDay> workingDays = new HashSet<>();
 
     @OneToMany(mappedBy = "doctorsDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<DoctorsContact> contacts = new HashSet<>();
+    private Set<DoctorContact> contacts = new HashSet<>();
 
     @ManyToMany(mappedBy = "savedDoctors", fetch = FetchType.LAZY)
     private Set<User> savedByUsers = new HashSet<>();
@@ -94,12 +94,12 @@ public class DoctorsDetails {
         this.user = user;
     }
 
-    public Set<DoctorsSpecialisation> getDoctorsSpecialisations() {
-        return doctorsSpecialisations;
+    public Set<DoctorSpecialisation> getSpecialisations() {
+        return specialisations;
     }
 
-    public void setDoctorsSpecialisations(Set<DoctorsSpecialisation> doctorsSpecialisations) {
-        this.doctorsSpecialisations = doctorsSpecialisations;
+    public void setSpecialisations(Set<DoctorSpecialisation> specialisations) {
+        this.specialisations = specialisations;
     }
 
     public Boolean getActive() {
@@ -182,11 +182,11 @@ public class DoctorsDetails {
         this.workingDays = workingDays;
     }
 
-    public Set<DoctorsContact> getContacts() {
+    public Set<DoctorContact> getContacts() {
         return contacts;
     }
 
-    public void setContacts(Set<DoctorsContact> contacts) {
+    public void setContacts(Set<DoctorContact> contacts) {
         this.contacts = contacts;
     }
 
@@ -206,32 +206,30 @@ public class DoctorsDetails {
         this.reviews = reviews;
     }
 
-    public void addSpecialisation(DoctorsSpecialisation specialisation) {
-        this.doctorsSpecialisations.add(specialisation);
+    public void addSpecialisation(DoctorSpecialisation specialisation) {
+        this.specialisations.add(specialisation);
         specialisation.getDoctors().add(this);
     }
 
-    public void removeSpecialisation(DoctorsSpecialisation specialisation) {
-        this.doctorsSpecialisations.remove(specialisation);
+    public void removeSpecialisation(DoctorSpecialisation specialisation) {
+        this.specialisations.remove(specialisation);
         specialisation.getDoctors().remove(this);
     }
 
-    public void addOrUpdateWorkingDay(WorkingDay workingDay) {
-        this.workingDays.removeIf(day -> day.getDayOfWeek().equals(workingDay.getDayOfWeek()));
-        this.workingDays.add(workingDay);
+    public void assignSpecialisations(Set<DoctorSpecialisation> specialisations) {
+        Set<DoctorSpecialisation> specialisationSet = new HashSet<>(this.specialisations);
+        specialisationSet.forEach(this::removeSpecialisation);
+        specialisations.forEach(this::addSpecialisation);
+
     }
 
-    public void removeWorkingDayByDayOfWeek(DayOfWeek dayOfWeek) {
-        this.workingDays.removeIf(workingDay -> workingDay.getDayOfWeek().equals(dayOfWeek));
-    }
-
-    public void addContact(DoctorsContact contact) {
+    public void addContact(DoctorContact contact) {
         this.contacts.add(contact);
         contact.setDoctorsDetails(this);
     }
 
     public void removeContactById(int contactId) {
-        DoctorsContact contact = this.contacts.stream().
+        DoctorContact contact = this.contacts.stream().
                 filter(c -> c.getId() == contactId).findFirst().orElse(null);
         if (contact != null) {
             this.contacts.remove(contact);

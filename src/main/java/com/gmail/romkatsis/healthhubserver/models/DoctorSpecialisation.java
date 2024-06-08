@@ -7,12 +7,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "doctors_specialisations_types")
-public class DoctorsSpecialisation extends Specialisation {
+public class DoctorSpecialisation extends Specialisation {
 
-    @ManyToMany(mappedBy = "doctorsSpecialisations")
+    @ManyToMany(mappedBy = "specialisations")
     private Set<DoctorsDetails> doctors = new HashSet<>();
 
-    public DoctorsSpecialisation() {
+    public DoctorSpecialisation() {
     }
 
     public Set<DoctorsDetails> getDoctors() {

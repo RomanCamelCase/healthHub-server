@@ -1,5 +1,8 @@
 package com.gmail.romkatsis.healthhubserver.dtos.responses;
 
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.ContactDto;
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.SpecialisationDto;
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.WorkingDayDto;
 import com.gmail.romkatsis.healthhubserver.enums.DoctorQualificationCategory;
 import com.gmail.romkatsis.healthhubserver.enums.Gender;
 import com.gmail.romkatsis.healthhubserver.enums.PatientType;
@@ -27,8 +30,6 @@ public class DoctorInfoResponse {
 
     private DoctorQualificationCategory qualificationCategory;
 
-    private Set<Integer> specialisations;
-
     private String description;
 
     private String city;
@@ -37,6 +38,13 @@ public class DoctorInfoResponse {
 
     private String googleMapsPlaceId;
 
+    private Integer clinicId;
+
+    private Set<SpecialisationDto> specialisations;
+
+    private Set<WorkingDayDto> workingDays;
+
+    private Set<ContactDto> contacts;
 
     public DoctorInfoResponse() {
     }
@@ -145,11 +153,35 @@ public class DoctorInfoResponse {
         this.googleMapsPlaceId = googleMapsPlaceId;
     }
 
-    public Set<Integer> getSpecialisations() {
+    public Integer getClinicId() {
+        return clinicId;
+    }
+
+    public void setClinicId(Integer clinicId) {
+        this.clinicId = clinicId;
+    }
+
+    public Set<SpecialisationDto> getSpecialisations() {
         return specialisations;
     }
 
-    public void setSpecialisations(Set<Integer> specialisations) {
+    public void setSpecialisations(Set<SpecialisationDto> specialisations) {
         this.specialisations = specialisations;
+    }
+
+    public Set<WorkingDayDto> getWorkingDays() {
+        return workingDays;
+    }
+
+    public void setWorkingDays(Set<WorkingDayDto> workingDays) {
+        this.workingDays = workingDays;
+    }
+
+    public Set<ContactDto> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(Set<ContactDto> contacts) {
+        this.contacts = contacts;
     }
 }
