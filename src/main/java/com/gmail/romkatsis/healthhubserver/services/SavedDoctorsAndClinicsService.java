@@ -1,7 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.services;
 
 import com.gmail.romkatsis.healthhubserver.dtos.responses.ClinicInfoShortResponse;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorsDetailsInfoShortResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoShortResponse;
 import com.gmail.romkatsis.healthhubserver.models.Clinic;
 import com.gmail.romkatsis.healthhubserver.models.DoctorsDetails;
 import com.gmail.romkatsis.healthhubserver.models.User;
@@ -31,25 +31,25 @@ public class SavedDoctorsAndClinicsService {
         this.modelMapper = modelMapper;
     }
 
-    public Set<DoctorsDetailsInfoShortResponse> getSavedDoctorsByUserId(int userId) {
+    public Set<DoctorInfoShortResponse> getSavedDoctorsByUserId(int userId) {
         User user = userService.findUserById(userId);
-        return convertDoctorsDetailsToDoctorsDetailsShortResponse(user.getSavedDoctors());
+        return convertDoctorsDetailsToDoctorInfoShortResponse(user.getSavedDoctors());
     }
 
     @Transactional
-    public Set<DoctorsDetailsInfoShortResponse> saveDoctor(int userId, int doctorId) {
+    public Set<DoctorInfoShortResponse> saveDoctor(int userId, int doctorId) {
         User user = userService.findUserById(userId);
         DoctorsDetails doctor = doctorsDetailsService.findDoctorsDetailsById(doctorId);
         user.saveDoctor(doctor);
-        return convertDoctorsDetailsToDoctorsDetailsShortResponse(user.getSavedDoctors());
+        return convertDoctorsDetailsToDoctorInfoShortResponse(user.getSavedDoctors());
     }
 
     @Transactional
-    public Set<DoctorsDetailsInfoShortResponse> deleteDoctor(int userId, int doctorId) {
+    public Set<DoctorInfoShortResponse> deleteDoctor(int userId, int doctorId) {
         User user = userService.findUserById(userId);
         DoctorsDetails doctor = doctorsDetailsService.findDoctorsDetailsById(doctorId);
         user.removeDoctorFromSaved(doctor);
-        return convertDoctorsDetailsToDoctorsDetailsShortResponse(user.getSavedDoctors());
+        return convertDoctorsDetailsToDoctorInfoShortResponse(user.getSavedDoctors());
     }
 
     public Set<ClinicInfoShortResponse> getSavedClinicsByUserId(int userId) {
@@ -79,14 +79,14 @@ public class SavedDoctorsAndClinicsService {
                 .collect(Collectors.toSet());
     }
 
-    private Set<DoctorsDetailsInfoShortResponse> convertDoctorsDetailsToDoctorsDetailsShortResponse(Set<DoctorsDetails> doctorsDetails) {
-        modelMapper.typeMap(DoctorsDetails.class, DoctorsDetailsInfoShortResponse.class)
+    private Set<DoctorInfoShortResponse> convertDoctorsDetailsToDoctorInfoShortResponse(Set<DoctorsDetails> doctorsDetails) {
+        modelMapper.typeMap(DoctorsDetails.class, DoctorInfoShortResponse.class)
                 .addMapping(details -> details.getUser().getFirstName(),
-                        DoctorsDetailsInfoShortResponse::setFirstName)
+                        DoctorInfoShortResponse::setFirstName)
                 .addMapping(details -> details.getUser().getLastName(),
-                        DoctorsDetailsInfoShortResponse::setLastName);
+                        DoctorInfoShortResponse::setLastName);
         return doctorsDetails.stream()
-                .map(d -> modelMapper.map(d, DoctorsDetailsInfoShortResponse.class))
+                .map(d -> modelMapper.map(d, DoctorInfoShortResponse.class))
                 .collect(Collectors.toSet());
     }
 }

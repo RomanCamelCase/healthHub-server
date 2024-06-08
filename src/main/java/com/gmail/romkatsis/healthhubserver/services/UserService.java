@@ -1,7 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.services;
 
 import com.gmail.romkatsis.healthhubserver.dtos.requests.RegistrationRequest;
-import com.gmail.romkatsis.healthhubserver.dtos.requests.UpdateUserInfoRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.requests.UserInfoRequest;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.CurrentUserInfoResponse;
 import com.gmail.romkatsis.healthhubserver.enums.Role;
 import com.gmail.romkatsis.healthhubserver.exceptions.EmailAlreadyRegisteredException;
@@ -59,9 +59,9 @@ public class UserService {
     }
 
     @Transactional
-    public CurrentUserInfoResponse editUserInfo(int userId, UpdateUserInfoRequest updateUserInfoRequest) {
+    public CurrentUserInfoResponse editUserInfo(int userId, UserInfoRequest userInfoRequest) {
         User user = findUserById(userId);
-        modelMapper.map(updateUserInfoRequest, user);
+        modelMapper.map(userInfoRequest, user);
         return convertUserToCurrentUserResponse(user);
     }
 

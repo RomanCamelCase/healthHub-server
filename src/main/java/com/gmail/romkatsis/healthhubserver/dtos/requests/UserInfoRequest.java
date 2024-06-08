@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-public class UpdateUserInfoRequest {
+public class UserInfoRequest {
 
     @NotBlank
     @Size(min = 2, max = 64)
@@ -25,7 +25,7 @@ public class UpdateUserInfoRequest {
     @Past
     private LocalDate dateOfBirth;
 
-    public UpdateUserInfoRequest() {}
+    public UserInfoRequest() {}
 
     public @NotBlank @Size(min = 2, max = 64) String getFirstName() {
         return firstName;

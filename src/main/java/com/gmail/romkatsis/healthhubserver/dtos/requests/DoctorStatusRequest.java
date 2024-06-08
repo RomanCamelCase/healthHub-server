@@ -2,12 +2,12 @@ package com.gmail.romkatsis.healthhubserver.dtos.requests;
 
 import jakarta.validation.constraints.NotNull;
 
-public class DoctorsStatusRequest {
+public class DoctorStatusRequest {
 
     @NotNull
     private boolean isActive;
 
-    public DoctorsStatusRequest() {
+    public DoctorStatusRequest() {
     }
 
     public boolean isActive() {

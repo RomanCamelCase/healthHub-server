@@ -1,9 +1,9 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.requests.ContactRequest;
-import com.gmail.romkatsis.healthhubserver.dtos.requests.DoctorsDetailsRequest;
-import com.gmail.romkatsis.healthhubserver.dtos.requests.DoctorsStatusRequest;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorsDetailsResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.requests.DoctorInfoRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.requests.DoctorStatusRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.models.*;
 import com.gmail.romkatsis.healthhubserver.services.AuthenticationService;
@@ -52,8 +52,8 @@ public class DoctorsDetailsController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TokensResponse addDoctorDetails(@AuthenticationPrincipal UserDetails userDetails,
-                                           @RequestBody @Valid DoctorsDetailsRequest doctorsDetailsRequest) {
-        DoctorsDetails doctorsDetails = convertDoctorsDetailsRequestToDoctorsDetails(doctorsDetailsRequest);
+                                           @RequestBody @Valid DoctorInfoRequest doctorInfoRequest) {
+        DoctorsDetails doctorsDetails = convertDoctorsDetailsRequestToDoctorsDetails(doctorInfoRequest);
         User user = userService.findUserById(Integer.parseInt(userDetails.getUsername()));
         doctorsDetailsService.addDoctorDetails(doctorsDetails, user);
         return authenticationService.generateTokensByUser(user);
@@ -61,7 +61,7 @@ public class DoctorsDetailsController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public DoctorsDetailsResponse getDoctorsDetailsPublicInfo(@PathVariable int id) {
+    public DoctorInfoResponse getDoctorsDetailsPublicInfo(@PathVariable int id) {
         DoctorsDetails doctorsDetails = doctorsDetailsService.findDoctorsDetailsById(id);
         return convertDoctorsDetailsToDoctorsDetailsPublicResponse(doctorsDetails);
     }
@@ -69,8 +69,8 @@ public class DoctorsDetailsController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("#id == new Integer(principal.username)")
-    public DoctorsDetailsResponse editDoctorsDetailsInfo(@PathVariable int id,
-                                                         @RequestBody @Valid DoctorsDetailsRequest request) {
+    public DoctorInfoResponse editDoctorsDetailsInfo(@PathVariable int id,
+                                                     @RequestBody @Valid DoctorInfoRequest request) {
         DoctorsDetails doctorsDetails = doctorsDetailsService.findDoctorsDetailsById(id);
         modelMapper.map(request, doctorsDetails);
         doctorsDetails.setDoctorsSpecialisations(
@@ -82,8 +82,8 @@ public class DoctorsDetailsController {
     @PatchMapping("/{id}/status")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("#id == new Integer(principal.username)")
-    public DoctorsDetailsResponse updateDoctorsDetailsStatus(@PathVariable int id,
-                                                             @RequestBody @Valid DoctorsStatusRequest request) {
+    public DoctorInfoResponse updateDoctorsDetailsStatus(@PathVariable int id,
+                                                         @RequestBody @Valid DoctorStatusRequest request) {
         DoctorsDetails doctorsDetails = doctorsDetailsService.findDoctorsDetailsById(id);
         doctorsDetails.setActive(request.isActive());
         doctorsDetailsService.editDoctorDetails(doctorsDetails);
@@ -120,29 +120,29 @@ public class DoctorsDetailsController {
         return doctorsDetailsService.deleteDoctorsWorkingDay(id, dayOfWeek);
     }
 
-    private DoctorsDetails convertDoctorsDetailsRequestToDoctorsDetails(DoctorsDetailsRequest request) {
+    private DoctorsDetails convertDoctorsDetailsRequestToDoctorsDetails(DoctorInfoRequest request) {
         DoctorsDetails doctorsDetails = modelMapper.map(request, DoctorsDetails.class);
         doctorsDetails.setDoctorsSpecialisations(
                 doctorsSpecialisationService.getDoctorsSpecialisationsSetByIds(request.getSpecialisations()));
         return doctorsDetails;
     }
 
-    private DoctorsDetailsResponse convertDoctorsDetailsToDoctorsDetailsPublicResponse(DoctorsDetails doctorsDetails) {
+    private DoctorInfoResponse convertDoctorsDetailsToDoctorsDetailsPublicResponse(DoctorsDetails doctorsDetails) {
         Converter<Collection<DoctorsSpecialisation>, Collection<Integer>> converter = c ->
                 c.getSource().stream().map(DoctorsSpecialisation::getId).collect(Collectors.toSet());
 
-        modelMapper.typeMap(DoctorsDetails.class, DoctorsDetailsResponse.class)
+        modelMapper.typeMap(DoctorsDetails.class, DoctorInfoResponse.class)
                 .addMapping(details -> details.getUser().getFirstName(),
-                        DoctorsDetailsResponse::setFirstName)
+                        DoctorInfoResponse::setFirstName)
                 .addMapping(details -> details.getUser().getLastName(),
-                        DoctorsDetailsResponse::setLastName)
+                        DoctorInfoResponse::setLastName)
                 .addMapping(details -> details.getUser().getGender(),
-                        DoctorsDetailsResponse::setGender)
+                        DoctorInfoResponse::setGender)
                 .addMapping(details -> details.getUser().getRegistrationDate(),
-                        DoctorsDetailsResponse::setRegistrationDate)
+                        DoctorInfoResponse::setRegistrationDate)
                 .addMappings(mapper -> mapper.using(converter)
                         .map(DoctorsDetails::getDoctorsSpecialisations,
-                                DoctorsDetailsResponse::setSpecialisations));
-        return modelMapper.map(doctorsDetails, DoctorsDetailsResponse.class);
+                                DoctorInfoResponse::setSpecialisations));
+        return modelMapper.map(doctorsDetails, DoctorInfoResponse.class);
     }
 }

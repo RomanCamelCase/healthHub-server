@@ -1,10 +1,10 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.requests.RegistrationRequest;
-import com.gmail.romkatsis.healthhubserver.dtos.requests.UpdateUserInfoRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.requests.UserInfoRequest;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.ClinicInfoShortResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.CurrentUserInfoResponse;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorsDetailsInfoShortResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoShortResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.models.User;
 import com.gmail.romkatsis.healthhubserver.services.AuthenticationService;
@@ -52,27 +52,27 @@ public class UserController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public CurrentUserInfoResponse editUserInfo(@AuthenticationPrincipal UserDetails userDetails,
-                                                @RequestBody @Valid UpdateUserInfoRequest updateUserInfoRequest) {
-        return userService.editUserInfo(Integer.parseInt(userDetails.getUsername()), updateUserInfoRequest);
+                                                @RequestBody @Valid UserInfoRequest userInfoRequest) {
+        return userService.editUserInfo(Integer.parseInt(userDetails.getUsername()), userInfoRequest);
     }
 
     @GetMapping("/saved-doctors")
     @ResponseStatus(HttpStatus.OK)
-    public Set<DoctorsDetailsInfoShortResponse> getAllSavedDoctors(@AuthenticationPrincipal UserDetails userDetails) {
+    public Set<DoctorInfoShortResponse> getAllSavedDoctors(@AuthenticationPrincipal UserDetails userDetails) {
         return savedDoctorsAndClinicsService.getSavedDoctorsByUserId(Integer.parseInt(userDetails.getUsername()));
     }
 
     @PostMapping("/saved-doctors/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Set<DoctorsDetailsInfoShortResponse> addSavedDoctor(@PathVariable int id,
-                                                               @AuthenticationPrincipal UserDetails userDetails) {
+    public Set<DoctorInfoShortResponse> addSavedDoctor(@PathVariable int id,
+                                                       @AuthenticationPrincipal UserDetails userDetails) {
          return savedDoctorsAndClinicsService.saveDoctor(Integer.parseInt(userDetails.getUsername()), id);
     }
 
     @DeleteMapping("/saved-doctors/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Set<DoctorsDetailsInfoShortResponse> removeSavedDoctor(@PathVariable int id,
-                                                                  @AuthenticationPrincipal UserDetails userDetails) {
+    public Set<DoctorInfoShortResponse> removeSavedDoctor(@PathVariable int id,
+                                                          @AuthenticationPrincipal UserDetails userDetails) {
         return savedDoctorsAndClinicsService.deleteDoctor(Integer.parseInt(userDetails.getUsername()), id);
     }
 

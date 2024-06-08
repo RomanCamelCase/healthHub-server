@@ -1,92 +1,39 @@
-package com.gmail.romkatsis.healthhubserver.dtos.responses;
+package com.gmail.romkatsis.healthhubserver.dtos.requests;
 
 import com.gmail.romkatsis.healthhubserver.enums.DoctorQualificationCategory;
-import com.gmail.romkatsis.healthhubserver.enums.Gender;
 import com.gmail.romkatsis.healthhubserver.enums.PatientType;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-public class DoctorsDetailsResponse {
+public class DoctorInfoRequest {
 
-    private int id;
-
-    private String firstName;
-
-    private String lastName;
-
-    private Gender gender;
-
-    private LocalDate registrationDate;
-
-    private boolean isActive;
-
+    @NotNull
     private PatientType workWith;
 
+    @NotNull
     private LocalDate workExperience;
 
+    @NotNull
     private DoctorQualificationCategory qualificationCategory;
-
-    private Set<Integer> specialisations;
 
     private String description;
 
+    @NotNull
+    @Size(min = 2, max = 64)
     private String city;
 
+    @NotNull
+    @Size(min = 2, max = 128)
     private String address;
 
-    private String googleMapsPlaceId;
+    @NotEmpty
+    private Set<Integer> specialisations;
 
-
-    public DoctorsDetailsResponse() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public void setRegistrationDate(LocalDate registrationDate) {
-        this.registrationDate = registrationDate;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
+    public DoctorInfoRequest() {
     }
 
     public PatientType getWorkWith() {
@@ -135,14 +82,6 @@ public class DoctorsDetailsResponse {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getGoogleMapsPlaceId() {
-        return googleMapsPlaceId;
-    }
-
-    public void setGoogleMapsPlaceId(String googleMapsPlaceId) {
-        this.googleMapsPlaceId = googleMapsPlaceId;
     }
 
     public Set<Integer> getSpecialisations() {

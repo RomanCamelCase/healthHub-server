@@ -5,7 +5,7 @@ import com.gmail.romkatsis.healthhubserver.enums.DoctorQualificationCategory;
 
 import java.util.Set;
 
-public class DoctorsDetailsInfoShortResponse {
+public class DoctorInfoShortResponse {
 
     private int id;
 
@@ -17,7 +17,7 @@ public class DoctorsDetailsInfoShortResponse {
 
     private Set<SpecialisationDto> specialisations;
 
-    public DoctorsDetailsInfoShortResponse() {
+    public DoctorInfoShortResponse() {
     }
 
     public int getId() {
