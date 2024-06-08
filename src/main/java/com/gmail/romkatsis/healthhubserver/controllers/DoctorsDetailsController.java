@@ -128,8 +128,8 @@ public class DoctorsDetailsController {
     }
 
     private DoctorsDetailsResponse convertDoctorsDetailsToDoctorsDetailsPublicResponse(DoctorsDetails doctorsDetails) {
-        Converter<Collection<DoctorsSpecialisation>, Collection<Integer>> converter = cnvrtr ->
-                cnvrtr.getSource().stream().map(DoctorsSpecialisation::getId).collect(Collectors.toSet());
+        Converter<Collection<DoctorsSpecialisation>, Collection<Integer>> converter = c ->
+                c.getSource().stream().map(DoctorsSpecialisation::getId).collect(Collectors.toSet());
 
         modelMapper.typeMap(DoctorsDetails.class, DoctorsDetailsResponse.class)
                 .addMapping(details -> details.getUser().getFirstName(),

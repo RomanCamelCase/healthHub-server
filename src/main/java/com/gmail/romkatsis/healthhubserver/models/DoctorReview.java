@@ -10,22 +10,10 @@ import jakarta.persistence.Table;
 public class DoctorReview extends Review {
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
     @JoinColumn(name = "doctor_id")
     private DoctorsDetails doctor;
 
     public DoctorReview() {
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public DoctorsDetails getDoctor() {

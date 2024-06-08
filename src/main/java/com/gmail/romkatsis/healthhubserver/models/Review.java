@@ -26,6 +26,10 @@ public abstract class Review {
     @Column(name = "text")
     private String text;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Review() {}
 
     public Integer getId() {
@@ -66,5 +70,13 @@ public abstract class Review {
 
     public void setAnonymous(Boolean anonymous) {
         isAnonymous = anonymous;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

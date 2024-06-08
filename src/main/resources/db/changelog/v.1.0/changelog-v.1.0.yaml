@@ -137,3 +137,21 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: "db/changelog/v.1.0/2024-06-07-doctors_reviews_table-create.sql"
+  - changeSet:
+      id: 23
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-08-clinics_amenities_types_table-create.sql"
+  - changeSet:
+      id: 24
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-08-clinics_amenities_table-create.sql"
+  - changeSet:
+      id: 25
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-07-clinics_reviews_table-doctors_reviews_table-add-posted_at_column.sql"

@@ -78,12 +78,12 @@ public class ExceptionController {
                 exception.getMessage());
     }
 
-//    @ExceptionHandler(RuntimeException.class)
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public PlainErrorResponse handleUnexpectedError(HttpServletRequest request) {
-//        return new PlainErrorResponse(
-//                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-//                request.getServletPath(),
-//                "An internal server error occurred");
-//    }
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public PlainErrorResponse handleUnexpectedError(HttpServletRequest request) {
+        return new PlainErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                request.getServletPath(),
+                "An internal server error occurred");
+    }
 }

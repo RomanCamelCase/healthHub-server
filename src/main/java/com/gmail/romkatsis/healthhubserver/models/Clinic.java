@@ -2,7 +2,6 @@ package com.gmail.romkatsis.healthhubserver.models;
 
 import jakarta.persistence.*;
 
-import java.time.DayOfWeek;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -20,7 +19,7 @@ public class Clinic {
     private String name;
 
     @Column(name = "is_private", nullable = false)
-    private boolean isPrivate;
+    private Boolean isPrivate;
 
     @Column(name = "description")
     private String description;
@@ -42,7 +41,7 @@ public class Clinic {
     private DoctorsDetails admin;
 
     @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    private Set<DoctorsDetails> doctors;
+    private Set<DoctorsDetails> doctors = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(
@@ -61,6 +60,15 @@ public class Clinic {
 
     @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ClinicContact> contacts = new HashSet<>();
+
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "clinics_amenities",
+            joinColumns = @JoinColumn(name = "clinic_id"),
+            inverseJoinColumns = @JoinColumn(name = "amenity_id")
+    )
+    private Set<ClinicAmenity> amenities = new HashSet<>();
+
 
     @ManyToMany(mappedBy = "savedClinics", fetch = FetchType.LAZY)
     private Set<User> savedByUsers = new HashSet<>();
@@ -87,11 +95,11 @@ public class Clinic {
         this.name = name;
     }
 
-    public boolean isPrivate() {
+    public Boolean getPrivate() {
         return isPrivate;
     }
 
-    public void setPrivate(boolean aPrivate) {
+    public void setPrivate(Boolean aPrivate) {
         isPrivate = aPrivate;
     }
 
@@ -175,6 +183,14 @@ public class Clinic {
         this.contacts = contacts;
     }
 
+    public Set<ClinicAmenity> getAmenities() {
+        return amenities;
+    }
+
+    public void setAmenities(Set<ClinicAmenity> amenities) {
+        this.amenities = amenities;
+    }
+
     public Set<User> getSavedByUsers() {
         return savedByUsers;
     }
@@ -216,13 +232,10 @@ public class Clinic {
         specialisation.getClinics().remove(this);
     }
 
-    public void addOrUpdateWorkingDay(WorkingDay workingDay) {
-        this.workingDays.removeIf(day -> day.getDayOfWeek().equals(workingDay.getDayOfWeek()));
-        this.workingDays.add(workingDay);
-    }
-
-    public void removeWorkingDayByDayOfWeek(DayOfWeek dayOfWeek) {
-        this.workingDays.removeIf(workingDay -> workingDay.getDayOfWeek().equals(dayOfWeek));
+    public void assignSpecialisations(Set<ClinicSpecialisation> specialisations) {
+        Set<ClinicSpecialisation> specialisationSet = new HashSet<>(this.specialisations);
+        specialisationSet.forEach(this::removeSpecialisation);
+        specialisations.forEach(this::addSpecialisation);
     }
 
     public void addContact(ClinicContact contact) {
@@ -238,4 +251,21 @@ public class Clinic {
             contact.setClinic(null);
         }
     }
+
+    public void addAmenity(ClinicAmenity amenity) {
+        this.amenities.add(amenity);
+        amenity.getClinics().add(this);
+    }
+
+    public void removeAmenity(ClinicAmenity amenity) {
+        this.amenities.remove(amenity);
+        amenity.getClinics().remove(this);
+    }
+
+    public void assignAmenities(Set<ClinicAmenity> amenities) {
+        Set<ClinicAmenity> amenitiesSet = new HashSet<>(this.amenities);
+        amenitiesSet.forEach(this::removeAmenity);
+        amenities.forEach(this::addAmenity);
+    }
+
 }
