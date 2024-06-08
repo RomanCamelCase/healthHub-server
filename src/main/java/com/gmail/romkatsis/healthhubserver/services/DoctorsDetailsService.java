@@ -5,6 +5,7 @@ import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.enums.Role;
 import com.gmail.romkatsis.healthhubserver.exceptions.ResourceNotFoundException;
+import com.gmail.romkatsis.healthhubserver.exceptions.UserResourceLimitExceededException;
 import com.gmail.romkatsis.healthhubserver.models.*;
 import com.gmail.romkatsis.healthhubserver.repositories.DoctorSpecialisationRepository;
 import com.gmail.romkatsis.healthhubserver.repositories.DoctorsDetailsRepository;
@@ -53,6 +54,11 @@ public class DoctorsDetailsService {
         doctorsDetails.setActive(true);
 
         User user = userService.findUserById(userId);
+        if (user.getDoctorsDetails() != null) {
+            throw new UserResourceLimitExceededException(
+                    "User already has doctor account details. Please use methods to edit the information");
+        }
+
         user.addDoctorsDetails(doctorsDetails);
         user.addRole(Role.ROLE_DOCTOR);
         return authenticationService.generateTokensByUser(user);

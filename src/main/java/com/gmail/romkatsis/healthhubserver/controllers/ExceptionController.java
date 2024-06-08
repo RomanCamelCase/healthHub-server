@@ -2,7 +2,9 @@ package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.responses.PlainErrorResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.ValidationErrorResponse;
+import com.gmail.romkatsis.healthhubserver.exceptions.DataIntegrityException;
 import com.gmail.romkatsis.healthhubserver.exceptions.EmailAlreadyRegisteredException;
+import com.gmail.romkatsis.healthhubserver.exceptions.InvalidClinicSecretCodeException;
 import com.gmail.romkatsis.healthhubserver.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.channels.AcceptPendingException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,6 +33,15 @@ public class ExceptionController {
                 HttpStatus.UNAUTHORIZED.value(),
                 request.getServletPath(),
                 exception.getMessage());
+    }
+
+    @ExceptionHandler(AcceptPendingException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public PlainErrorResponse handleAcceptPendingException(HttpServletRequest request) {
+        return new PlainErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                request.getServletPath(),
+                "You do not have sufficient rights to submit this request");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -58,6 +70,17 @@ public class ExceptionController {
                 "Cannot read request content");
     }
 
+    @ExceptionHandler({DataIntegrityException.class, InvalidClinicSecretCodeException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public PlainErrorResponse handleDataIntegrityError(RuntimeException exception,
+                                                       HttpServletRequest request) {
+        return new PlainErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                request.getServletPath(),
+                exception.getMessage()
+        );
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public PlainErrorResponse handleResourceNotFoundError(RuntimeException exception,
@@ -77,13 +100,12 @@ public class ExceptionController {
                 request.getServletPath(),
                 exception.getMessage());
     }
-
-//    @ExceptionHandler(RuntimeException.class)
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public PlainErrorResponse handleUnexpectedError(HttpServletRequest request) {
-//        return new PlainErrorResponse(
-//                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-//                request.getServletPath(),
-//                "An internal server error occurred");
-//    }
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public PlainErrorResponse handleUnexpectedError(HttpServletRequest request) {
+        return new PlainErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                request.getServletPath(),
+                "An internal server error occurred");
+    }
 }

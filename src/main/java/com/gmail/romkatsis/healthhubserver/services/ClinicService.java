@@ -2,9 +2,12 @@ package com.gmail.romkatsis.healthhubserver.services;
 
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.ClinicInfoResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoShortResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.SecretCodeResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.enums.Role;
+import com.gmail.romkatsis.healthhubserver.exceptions.DataIntegrityException;
+import com.gmail.romkatsis.healthhubserver.exceptions.InvalidClinicSecretCodeException;
 import com.gmail.romkatsis.healthhubserver.exceptions.ResourceNotFoundException;
 import com.gmail.romkatsis.healthhubserver.exceptions.UserResourceLimitExceededException;
 import com.gmail.romkatsis.healthhubserver.models.*;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -124,6 +128,41 @@ public class ClinicService {
         return convertClinicToClinicInfoResponse(clinic);
     }
 
+    public Set<DoctorInfoShortResponse> getDoctorsByClinicId(int clinicId) {
+        Clinic clinic = getClinicById(clinicId);
+        return convertDoctorsDetailsToDoctorInfoShortResponse(clinic.getDoctors());
+    }
+
+    @Transactional
+    public Set<DoctorInfoShortResponse> addDoctor(int clinicId, ClinicNewDoctorRequest request) {
+        Clinic clinic = getClinicById(clinicId);
+
+        if (!clinic.getSecretCode().equals(request.getSecretCode())) {
+            throw new InvalidClinicSecretCodeException(
+                    "Your secret code is incorrect. Please contact the clinic administrator.");
+        }
+
+        DoctorsDetails doctor = doctorsDetailsService.findDoctorsDetailsById(request.getDoctorId());
+        if (doctor.getClinic() != null) {
+            throw new UserResourceLimitExceededException(
+                    "Doctor already belongs to another clinic and cannot join this");
+        }
+
+        clinic.addDoctor(doctor);
+        return convertDoctorsDetailsToDoctorInfoShortResponse(clinic.getDoctors());
+    }
+
+    @Transactional
+    public Set<DoctorInfoShortResponse> removeDoctor(int clinicId, int doctorId) {
+        Clinic clinic = getClinicById(clinicId);
+        if (clinic.getAdmin().getUserId() == doctorId) {
+            throw new DataIntegrityException("Clinic can not exists without an admin");
+        }
+        DoctorsDetails doctor = doctorsDetailsService.findDoctorsDetailsById(doctorId);
+        clinic.removeDoctor(doctor);
+        return convertDoctorsDetailsToDoctorInfoShortResponse(clinic.getDoctors());
+    }
+
     public SecretCodeResponse getClinicSecretCode(int clinicId) {
         Clinic clinic = getClinicById(clinicId);
         return new SecretCodeResponse(clinic.getSecretCode());
@@ -141,5 +180,16 @@ public class ClinicService {
 
     private ClinicInfoResponse convertClinicToClinicInfoResponse(Clinic clinic) {
         return modelMapper.map(clinic, ClinicInfoResponse.class);
+    }
+
+    private Set<DoctorInfoShortResponse> convertDoctorsDetailsToDoctorInfoShortResponse(Set<DoctorsDetails> doctorsDetails) {
+        modelMapper.typeMap(DoctorsDetails.class, DoctorInfoShortResponse.class)
+                .addMapping(details -> details.getUser().getFirstName(),
+                        DoctorInfoShortResponse::setFirstName)
+                .addMapping(details -> details.getUser().getLastName(),
+                        DoctorInfoShortResponse::setLastName);
+        return doctorsDetails.stream()
+                .map(d -> modelMapper.map(d, DoctorInfoShortResponse.class))
+                .collect(Collectors.toSet());
     }
 }

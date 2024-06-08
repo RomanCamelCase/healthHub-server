@@ -3,6 +3,7 @@ package com.gmail.romkatsis.healthhubserver.controllers;
 import com.gmail.romkatsis.healthhubserver.dtos.embedded.ReviewDto;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.ClinicInfoResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoShortResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.SecretCodeResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.services.ClinicService;
@@ -96,6 +97,27 @@ public class ClinicController {
     //    @PreAuthorize("")
     public SecretCodeResponse getClinicSecretCode(@PathVariable int id) {
         return clinicService.getClinicSecretCode(id);
+    }
+
+    @GetMapping("/{id}/doctors")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<DoctorInfoShortResponse> getClinicDoctors(@PathVariable int id) {
+        return clinicService.getDoctorsByClinicId(id);
+    }
+
+    @PostMapping("/{id}/doctors")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<DoctorInfoShortResponse> addDoctorToClinic(@PathVariable int id,
+                                                          @RequestBody @Valid ClinicNewDoctorRequest request) {
+        return clinicService.addDoctor(id, request);
+    }
+
+    @DeleteMapping("/{id/doctors}")
+    @ResponseStatus(HttpStatus.OK)
+    //    @PreAuthorize("")
+    public Set<DoctorInfoShortResponse> deleteDoctorFromClinic(@PathVariable int id,
+                                                               @RequestParam int doctorId) {
+        return clinicService.removeDoctor(id, doctorId);
     }
 
 

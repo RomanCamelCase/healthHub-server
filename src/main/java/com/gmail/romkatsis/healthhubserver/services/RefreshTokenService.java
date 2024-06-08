@@ -54,4 +54,8 @@ public class RefreshTokenService {
         return user;
     }
 
+    @Transactional
+    public void removeAllTokensByUser(User user) {
+        refreshTokenRepository.deleteAllByUser(user);
+    }
 }

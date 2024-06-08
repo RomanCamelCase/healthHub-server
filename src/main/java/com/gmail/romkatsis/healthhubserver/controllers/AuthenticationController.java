@@ -29,6 +29,13 @@ public class AuthenticationController {
     @PostMapping("/refresh-tokens")
     @ResponseStatus(HttpStatus.OK)
     public TokensResponse refreshTokens(@RequestBody RefreshTokenRequest request) {
-        return authenticationService.refreshUserTokens(request.getRefreshToken());
+        return authenticationService.refreshUserTokens(request);
+    }
+
+    @PostMapping("/log-out")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest,
+                       @RequestParam(defaultValue = "false") boolean fromAllDevices) {
+        authenticationService.logOut(refreshTokenRequest, fromAllDevices);
     }
 }
