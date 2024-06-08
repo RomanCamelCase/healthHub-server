@@ -1,7 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.ClinicFullInfoResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.ClinicInfoResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.SecretCodeResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.services.ClinicService;
@@ -32,55 +32,55 @@ public class ClinicController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ClinicFullInfoResponse getClinic(@PathVariable int id) {
+    public ClinicInfoResponse getClinicInfo(@PathVariable int id) {
         return clinicService.getClinicInfoById(id);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     //    @PreAuthorize("")
-    public ClinicFullInfoResponse editClinicInfo(@PathVariable int id,
-                                                 @RequestBody @Valid ClinicInfoRequest clinicInfo) {
+    public ClinicInfoResponse editClinicInfo(@PathVariable int id,
+                                             @RequestBody @Valid ClinicInfoRequest clinicInfo) {
         return clinicService.editClinicInfo(id, clinicInfo);
     }
 
     @PutMapping("/{id}/specialisations")
     @ResponseStatus(HttpStatus.OK)
     //    @PreAuthorize("")
-    public ClinicFullInfoResponse editClinicSpecialisations(@PathVariable int id,
-                                                            @RequestBody @Valid SpecialisationsRequest specialisations) {
+    public ClinicInfoResponse editClinicSpecialisations(@PathVariable int id,
+                                                        @RequestBody @Valid SpecialisationsRequest specialisations) {
         return clinicService.editClinicSpecialisations(id, specialisations);
     }
 
     @PutMapping("/{id}/working-days")
     @ResponseStatus(HttpStatus.OK)
     //    @PreAuthorize("")
-    public ClinicFullInfoResponse editClinicWorkingDays(@PathVariable int id,
-                                                        @RequestBody @Valid WorkingDaysRequest workingDays) {
+    public ClinicInfoResponse editClinicWorkingDays(@PathVariable int id,
+                                                    @RequestBody @Valid WorkingDaysRequest workingDays) {
         return clinicService.editClinicWorkingDays(id, workingDays);
     }
 
     @PutMapping("/{id}/amenities")
     @ResponseStatus(HttpStatus.OK)
     //    @PreAuthorize("")
-    public ClinicFullInfoResponse editClinicAmenities(@PathVariable int id,
-                                                      @RequestBody @Valid AmenitiesRequest amenities) {
+    public ClinicInfoResponse editClinicAmenities(@PathVariable int id,
+                                                  @RequestBody @Valid AmenitiesRequest amenities) {
         return clinicService.editClinicAmenities(id, amenities);
     }
 
     @PostMapping("/{id}/contacts")
     @ResponseStatus(HttpStatus.CREATED)
     //    @PreAuthorize("")
-    public ClinicFullInfoResponse addClinicContact(@PathVariable int id,
-                                                   @RequestBody @Valid ContactRequest contact) {
+    public ClinicInfoResponse addClinicContact(@PathVariable int id,
+                                               @RequestBody @Valid ContactRequest contact) {
         return clinicService.addClinicContact(id, contact);
     }
 
     @DeleteMapping("/{id}/contacts")
     @ResponseStatus(HttpStatus.OK)
     //    @PreAuthorize("")
-    public ClinicFullInfoResponse deleteClinicContact(@PathVariable int id,
-                                                      @RequestParam @Valid int contactId) {
+    public ClinicInfoResponse deleteClinicContact(@PathVariable int id,
+                                                  @RequestParam @Valid int contactId) {
         return clinicService.removeClinicContact(id, contactId);
     }
 

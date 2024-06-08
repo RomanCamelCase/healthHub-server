@@ -1,10 +1,11 @@
 package com.gmail.romkatsis.healthhubserver.dtos.responses;
 
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.SpecialisationDto;
 import com.gmail.romkatsis.healthhubserver.enums.DoctorQualificationCategory;
 
 import java.util.Set;
 
-public class DoctorsDetailsShortResponse {
+public class DoctorsDetailsInfoShortResponse {
 
     private int id;
 
@@ -14,9 +15,9 @@ public class DoctorsDetailsShortResponse {
 
     private DoctorQualificationCategory qualificationCategory;
 
-    private Set<Integer> specialisations;
+    private Set<SpecialisationDto> specialisations;
 
-    public DoctorsDetailsShortResponse() {
+    public DoctorsDetailsInfoShortResponse() {
     }
 
     public int getId() {
@@ -51,11 +52,11 @@ public class DoctorsDetailsShortResponse {
         this.qualificationCategory = qualificationCategory;
     }
 
-    public Set<Integer> getSpecialisations() {
+    public Set<SpecialisationDto> getSpecialisations() {
         return specialisations;
     }
 
-    public void setSpecialisations(Set<Integer> specialisations) {
+    public void setSpecialisations(Set<SpecialisationDto> specialisations) {
         this.specialisations = specialisations;
     }
 }

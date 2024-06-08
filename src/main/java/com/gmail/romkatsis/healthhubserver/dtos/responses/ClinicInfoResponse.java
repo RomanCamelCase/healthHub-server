@@ -7,7 +7,7 @@ import com.gmail.romkatsis.healthhubserver.dtos.embedded.WorkingDayDto;
 
 import java.util.Set;
 
-public class ClinicFullInfoResponse {
+public class ClinicInfoResponse {
 
     private int id;
 
@@ -31,7 +31,7 @@ public class ClinicFullInfoResponse {
 
     private Set<ClinicAmenityDto> amenities;
 
-    public ClinicFullInfoResponse() {}
+    public ClinicInfoResponse() {}
 
     public int getId() {
         return id;

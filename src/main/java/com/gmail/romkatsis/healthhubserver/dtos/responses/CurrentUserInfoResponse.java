@@ -6,7 +6,7 @@ import com.gmail.romkatsis.healthhubserver.enums.Role;
 import java.time.LocalDate;
 import java.util.Set;
 
-public class CurrentUserResponse {
+public class CurrentUserInfoResponse {
 
     private int id;
 
@@ -24,7 +24,7 @@ public class CurrentUserResponse {
 
     private Set<Role> roles;
 
-    public CurrentUserResponse() {}
+    public CurrentUserInfoResponse() {}
 
     public int getId() {
         return id;

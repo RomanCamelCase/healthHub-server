@@ -1,7 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.services;
 
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.ClinicFullInfoResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.ClinicInfoResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.SecretCodeResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.enums.Role;
@@ -71,57 +71,57 @@ public class ClinicService {
     }
 
     @Transactional
-    public ClinicFullInfoResponse editClinicInfo(int clinicId, ClinicInfoRequest clinicInfo) {
+    public ClinicInfoResponse editClinicInfo(int clinicId, ClinicInfoRequest clinicInfo) {
         Clinic clinic = getClinicById(clinicId);
         modelMapper.map(clinicInfo, clinic);
-        return convertClinicToClinicFullInfoResponse(clinic);
+        return convertClinicToClinicInfoResponse(clinic);
     }
 
-    public ClinicFullInfoResponse getClinicInfoById(int id) {
+    public ClinicInfoResponse getClinicInfoById(int id) {
         Clinic clinic = getClinicById(id);
-        return convertClinicToClinicFullInfoResponse(clinic);
+        return convertClinicToClinicInfoResponse(clinic);
     }
 
     @Transactional
-    public ClinicFullInfoResponse editClinicSpecialisations(int clinicId, SpecialisationsRequest request) {
+    public ClinicInfoResponse editClinicSpecialisations(int clinicId, SpecialisationsRequest request) {
         Set<ClinicSpecialisation> specialisations =
                 specialisationRepository.findAllByIdIn(request.getSpecialisations());
 
         Clinic clinic = getClinicById(clinicId);
         clinic.assignSpecialisations(specialisations);
-        return convertClinicToClinicFullInfoResponse(clinic);
+        return convertClinicToClinicInfoResponse(clinic);
     }
 
     @Transactional
-    public ClinicFullInfoResponse editClinicWorkingDays(int clinicId, WorkingDaysRequest request) {
+    public ClinicInfoResponse editClinicWorkingDays(int clinicId, WorkingDaysRequest request) {
          Set<WorkingDay> workingDays = Set.of(modelMapper.map(request.getDays(), WorkingDay[].class));
          Clinic clinic = getClinicById(clinicId);
          clinic.setWorkingDays(workingDays);
-         return convertClinicToClinicFullInfoResponse(clinic);
+         return convertClinicToClinicInfoResponse(clinic);
     }
 
     @Transactional
-    public ClinicFullInfoResponse editClinicAmenities(int clinicId, AmenitiesRequest request) {
+    public ClinicInfoResponse editClinicAmenities(int clinicId, AmenitiesRequest request) {
         Set<ClinicAmenity> amenities = amenityRepository.findAllByIdIn(request.getAmenities());
         Clinic clinic = getClinicById(clinicId);
         clinic.assignAmenities(amenities);
-        return convertClinicToClinicFullInfoResponse(clinic);
+        return convertClinicToClinicInfoResponse(clinic);
     }
 
     @Transactional
-    public ClinicFullInfoResponse addClinicContact(int clinicId, ContactRequest contactRequest) {
+    public ClinicInfoResponse addClinicContact(int clinicId, ContactRequest contactRequest) {
         ClinicContact contact = modelMapper.map(contactRequest, ClinicContact.class);
         Clinic clinic = getClinicById(clinicId);
         clinic.addContact(contact);
         clinicRepository.saveAndFlush(clinic);
-        return convertClinicToClinicFullInfoResponse(clinic);
+        return convertClinicToClinicInfoResponse(clinic);
     }
 
     @Transactional
-    public ClinicFullInfoResponse removeClinicContact(int clinicId, int contactId) {
+    public ClinicInfoResponse removeClinicContact(int clinicId, int contactId) {
         Clinic clinic = getClinicById(clinicId);
         clinic.removeContactById(contactId);
-        return convertClinicToClinicFullInfoResponse(clinic);
+        return convertClinicToClinicInfoResponse(clinic);
     }
 
     public SecretCodeResponse getClinicSecretCode(int clinicId) {
@@ -129,7 +129,7 @@ public class ClinicService {
         return new SecretCodeResponse(clinic.getSecretCode());
     }
 
-    private ClinicFullInfoResponse convertClinicToClinicFullInfoResponse(Clinic clinic) {
-        return modelMapper.map(clinic, ClinicFullInfoResponse.class);
+    private ClinicInfoResponse convertClinicToClinicInfoResponse(Clinic clinic) {
+        return modelMapper.map(clinic, ClinicInfoResponse.class);
     }
 }

@@ -1,17 +1,21 @@
 package com.gmail.romkatsis.healthhubserver.services;
 
+import com.gmail.romkatsis.healthhubserver.dtos.requests.RegistrationRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.requests.UpdateUserInfoRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.CurrentUserInfoResponse;
+import com.gmail.romkatsis.healthhubserver.enums.Role;
 import com.gmail.romkatsis.healthhubserver.exceptions.EmailAlreadyRegisteredException;
 import com.gmail.romkatsis.healthhubserver.exceptions.ResourceNotFoundException;
-import com.gmail.romkatsis.healthhubserver.models.DoctorsDetails;
 import com.gmail.romkatsis.healthhubserver.models.User;
 import com.gmail.romkatsis.healthhubserver.repositories.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import java.time.LocalDate;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,13 +25,13 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final DoctorsDetailsService doctorsDetailsService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, DoctorsDetailsService doctorsDetailsService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.doctorsDetailsService = doctorsDetailsService;
+        this.modelMapper = modelMapper;
     }
 
     public User findUserById(int id) {
@@ -35,37 +39,33 @@ public class UserService {
                 new ResourceNotFoundException("User by id %s not found".formatted(id)));
     }
 
+    public CurrentUserInfoResponse getUserInfoById(int id) {
+        User user = findUserById(id);
+        return convertUserToCurrentUserResponse(user);
+    }
+
     @Transactional
-    public void saveUser(User user) {
+    public User saveUser(RegistrationRequest request) {
+        User user = modelMapper.map(request, User.class);
+        user.addRole(Role.ROLE_CUSTOMER);
+        user.setRegistrationDate(LocalDate.now());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         try {
-            userRepository.save(user);
+            return userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
             throw new EmailAlreadyRegisteredException("Email %s already registered".formatted(user.getEmail()));
         }
     }
 
     @Transactional
-    public void updateUser(User user) {
-        userRepository.save(user);
+    public CurrentUserInfoResponse editUserInfo(int userId, UpdateUserInfoRequest updateUserInfoRequest) {
+        User user = findUserById(userId);
+        modelMapper.map(updateUserInfoRequest, user);
+        return convertUserToCurrentUserResponse(user);
     }
 
-    @Transactional
-    public void addDoctorToSaved(int userId, int doctorId) {
-        User user = findUserById(userId);
-        DoctorsDetails doctorsDetails = doctorsDetailsService.findDoctorsDetailsById(doctorId);
-        user.saveDoctor(doctorsDetails);
-    }
-
-    @Transactional
-    public void removeDoctorFromSaved(int userId, int doctorId) {
-        User user = findUserById(userId);
-        DoctorsDetails doctorsDetails = doctorsDetailsService.findDoctorsDetailsById(doctorId);
-        user.removeDoctorFromSaved(doctorsDetails);
-    }
-
-    public Set<DoctorsDetails> getSavedDoctorsByUserId(int userId) {
-        User user = findUserById(userId);
-        return user.getSavedDoctors();
+    private CurrentUserInfoResponse convertUserToCurrentUserResponse(User user) {
+        return modelMapper.map(user, CurrentUserInfoResponse.class);
     }
 }
