@@ -268,4 +268,10 @@ public class Clinic {
         amenities.forEach(this::addAmenity);
     }
 
+    public void addReview(ClinicReview review, User user) {
+        this.reviews.add(review);
+        review.setClinic(this);
+        review.setUser(user);
+        user.getClinicReviews().add(review);
+    }
 }

@@ -1,10 +1,12 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.ReviewDto;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.ClinicInfoResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.SecretCodeResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.services.ClinicService;
+import com.gmail.romkatsis.healthhubserver.services.ReviewService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,15 +14,20 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api/v1/clinics")
 public class ClinicController {
 
     private final ClinicService clinicService;
 
+    private final ReviewService reviewService;
+
     @Autowired
-    public ClinicController(ClinicService clinicService) {
+    public ClinicController(ClinicService clinicService, ReviewService reviewService) {
         this.clinicService = clinicService;
+        this.reviewService = reviewService;
     }
 
     @PostMapping
@@ -92,4 +99,20 @@ public class ClinicController {
     }
 
 
+    @PostMapping("/{id}/reviews")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Set<ReviewDto> addClinicReview(@AuthenticationPrincipal UserDetails userDetails,
+                                          @PathVariable int id,
+                                          @RequestBody @Valid ReviewRequest request) {
+        return reviewService.addClinicReview(
+                Integer.parseInt(userDetails.getUsername()),
+                id,
+                request);
+    }
+
+    @GetMapping("/{id}/reviews")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<ReviewDto> getClinicReviews(@PathVariable int id) {
+        return reviewService.getClinicReviews(id);
+    }
 }

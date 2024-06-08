@@ -6,6 +6,10 @@ public class ReviewDto {
 
     private Integer id;
 
+    private String userFirstName;
+
+    private String userLastName;
+
     private LocalDateTime postedAt;
 
     private Boolean isAnonymous;
@@ -13,6 +17,7 @@ public class ReviewDto {
     private Integer rating;
 
     private String text;
+
 
     public ReviewDto() {
     }
@@ -55,5 +60,21 @@ public class ReviewDto {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getUserFirstName() {
+        return userFirstName;
+    }
+
+    public void setUserFirstName(String userFirstName) {
+        this.userFirstName = userFirstName;
+    }
+
+    public String getUserLastName() {
+        return userLastName;
+    }
+
+    public void setUserLastName(String userLastName) {
+        this.userLastName = userLastName;
     }
 }

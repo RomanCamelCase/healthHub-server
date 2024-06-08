@@ -67,10 +67,10 @@ public class User {
             )
     private Set<Clinic> savedClinics = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<DoctorReview> doctorsReviews = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<ClinicReview> clinicReviews = new HashSet<>();
 
     public User() {
@@ -215,16 +215,6 @@ public class User {
     public void removeClinicFromSaved(Clinic clinic) {
         this.savedClinics.remove(clinic);
         clinic.getSavedByUsers().remove(this);
-    }
-
-    public void addDoctorReview(DoctorReview doctorReview) {
-        this.doctorsReviews.add(doctorReview);
-        doctorReview.getDoctor().getReviews().add(doctorReview);
-    }
-
-    public void addClinicReview(ClinicReview clinicReview) {
-        this.clinicReviews.add(clinicReview);
-        clinicReview.getClinic().getReviews().add(clinicReview);
     }
 
     @Override

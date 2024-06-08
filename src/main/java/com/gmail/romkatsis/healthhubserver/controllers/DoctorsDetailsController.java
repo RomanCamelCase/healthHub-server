@@ -1,9 +1,11 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.ReviewDto;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.services.DoctorsDetailsService;
+import com.gmail.romkatsis.healthhubserver.services.ReviewService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,14 +13,19 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api/v1/doctors")
 public class DoctorsDetailsController {
 
     private final DoctorsDetailsService doctorsDetailsService;
 
-    public DoctorsDetailsController(DoctorsDetailsService doctorsDetailsService) {
+    private final ReviewService reviewService;
+
+    public DoctorsDetailsController(DoctorsDetailsService doctorsDetailsService, ReviewService reviewService) {
         this.doctorsDetailsService = doctorsDetailsService;
+        this.reviewService = reviewService;
     }
 
     @PostMapping
@@ -79,5 +86,22 @@ public class DoctorsDetailsController {
     public DoctorInfoResponse editDoctorWorkingDays(@PathVariable int id,
                                                     @RequestBody @Valid SpecialisationsRequest specialisations) {
         return doctorsDetailsService.editDoctorSpecialisations(id, specialisations);
+    }
+
+    @PostMapping("/{id}/reviews")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Set<ReviewDto> addDoctorReview(@AuthenticationPrincipal UserDetails userDetails,
+                                          @PathVariable int id,
+                                          @RequestBody @Valid ReviewRequest request) {
+        return reviewService.addDoctorReview(
+                Integer.parseInt(userDetails.getUsername()),
+                id,
+                request);
+    }
+
+    @GetMapping("/{id}/reviews")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<ReviewDto> getDoctorReviews(@PathVariable int id) {
+        return reviewService.getDoctorReview(id);
     }
 }

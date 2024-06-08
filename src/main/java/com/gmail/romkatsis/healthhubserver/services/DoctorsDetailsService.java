@@ -110,6 +110,16 @@ public class DoctorsDetailsService {
         return convertDoctorDetailsToDoctorInfoResponse(doctorsDetails);
     }
 
+    @Transactional
+    public Set<DoctorReview> addDoctorReview(int doctorId, int userId, ReviewRequest request) {
+        DoctorsDetails doctorsDetails = findDoctorsDetailsById(doctorId);
+        User user = userService.findUserById(userId);
+        DoctorReview doctorReview = modelMapper.map(request, DoctorReview.class);
+        doctorsDetails.addReview(doctorReview, user);
+        doctorsDetailsRepository.saveAndFlush(doctorsDetails);
+        return doctorsDetails.getReviews();
+    }
+
     private DoctorInfoResponse convertDoctorDetailsToDoctorInfoResponse(DoctorsDetails doctorsDetails) {
         modelMapper.typeMap(DoctorsDetails.class, DoctorInfoResponse.class)
                 .addMapping(doctor -> doctor.getUser().getFirstName(),

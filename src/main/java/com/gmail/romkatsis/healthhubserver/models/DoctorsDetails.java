@@ -236,4 +236,11 @@ public class DoctorsDetails {
             contact.setDoctorsDetails(null);
         }
     }
+
+    public void addReview(DoctorReview review, User user) {
+        this.getReviews().add(review);
+        review.setDoctor(this);
+        review.setUser(user);
+        user.getDoctorsReviews().add(review);
+    }
 }

@@ -129,6 +129,16 @@ public class ClinicService {
         return new SecretCodeResponse(clinic.getSecretCode());
     }
 
+    @Transactional
+    public Set<ClinicReview> addClinicReview(int clinicId, int userId, ReviewRequest request) {
+        Clinic clinic = getClinicById(clinicId);
+        User user = userService.findUserById(userId);
+        ClinicReview doctorReview = modelMapper.map(request, ClinicReview.class);
+        clinic.addReview(doctorReview, user);
+        clinicRepository.saveAndFlush(clinic);
+        return clinic.getReviews();
+    }
+
     private ClinicInfoResponse convertClinicToClinicInfoResponse(Clinic clinic) {
         return modelMapper.map(clinic, ClinicInfoResponse.class);
     }
