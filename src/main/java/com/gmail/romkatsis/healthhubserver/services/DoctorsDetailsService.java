@@ -9,6 +9,7 @@ import com.gmail.romkatsis.healthhubserver.exceptions.UserResourceLimitExceededE
 import com.gmail.romkatsis.healthhubserver.models.*;
 import com.gmail.romkatsis.healthhubserver.repositories.DoctorSpecialisationRepository;
 import com.gmail.romkatsis.healthhubserver.repositories.DoctorsDetailsRepository;
+import com.gmail.romkatsis.healthhubserver.utils.GoogleMapsApiUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,17 +31,20 @@ public class DoctorsDetailsService {
 
     private final ModelMapper modelMapper;
 
+    private final GoogleMapsApiUtils googleMapsApiUtils;
+
     @Autowired
     public DoctorsDetailsService(DoctorsDetailsRepository doctorsDetailsRepository,
                                  DoctorSpecialisationRepository specialisationRepository,
                                  UserService userService,
                                  AuthenticationService authenticationService,
-                                 ModelMapper modelMapper) {
+                                 ModelMapper modelMapper, GoogleMapsApiUtils googleMapsApiUtils) {
         this.doctorsDetailsRepository = doctorsDetailsRepository;
         this.specialisationRepository = specialisationRepository;
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.modelMapper = modelMapper;
+        this.googleMapsApiUtils = googleMapsApiUtils;
     }
 
     public DoctorsDetails findDoctorsDetailsById(int id) {
@@ -52,6 +56,7 @@ public class DoctorsDetailsService {
     public TokensResponse addDoctorDetails(int userId, DoctorInfoRequest request) {
         DoctorsDetails doctorsDetails = modelMapper.map(request, DoctorsDetails.class);
         doctorsDetails.setActive(true);
+        doctorsDetails.setGoogleMapsPlaceId(findGoogleMapsPlaceId(request));
 
         User user = userService.findUserById(userId);
         if (user.getDoctorsDetails() != null) {
@@ -72,6 +77,11 @@ public class DoctorsDetailsService {
     @Transactional
     public DoctorInfoResponse editDoctorInfo(int doctorId, DoctorInfoRequest request) {
         DoctorsDetails doctorsDetails = findDoctorsDetailsById(doctorId);
+        if (!doctorsDetails.getCity().equals(request.getCity()) ||
+                !doctorsDetails.getAddress().equals(request.getAddress())) {
+            doctorsDetails.setGoogleMapsPlaceId(findGoogleMapsPlaceId(request));
+        }
+
         modelMapper.map(request, doctorsDetails);
         return convertDoctorDetailsToDoctorInfoResponse(doctorsDetails);
     }
@@ -124,6 +134,10 @@ public class DoctorsDetailsService {
         doctorsDetails.addReview(doctorReview, user);
         doctorsDetailsRepository.saveAndFlush(doctorsDetails);
         return doctorsDetails.getReviews();
+    }
+
+    private String findGoogleMapsPlaceId(DoctorInfoRequest request) {
+        return googleMapsApiUtils.getPlaceIdByAddress("ua", request.getCity(), request.getAddress());
     }
 
     private DoctorInfoResponse convertDoctorDetailsToDoctorInfoResponse(DoctorsDetails doctorsDetails) {

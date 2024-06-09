@@ -9,6 +9,7 @@ import com.gmail.romkatsis.healthhubserver.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.nio.channels.AcceptPendingException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +35,7 @@ public class ExceptionController {
                 exception.getMessage());
     }
 
-    @ExceptionHandler(AcceptPendingException.class)
+    @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public PlainErrorResponse handleAcceptPendingException(HttpServletRequest request) {
         return new PlainErrorResponse(
@@ -100,12 +100,13 @@ public class ExceptionController {
                 request.getServletPath(),
                 exception.getMessage());
     }
-    @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public PlainErrorResponse handleUnexpectedError(HttpServletRequest request) {
-        return new PlainErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                request.getServletPath(),
-                "An internal server error occurred");
-    }
+//
+//    @ExceptionHandler(RuntimeException.class)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public PlainErrorResponse handleUnexpectedError(HttpServletRequest request) {
+//        return new PlainErrorResponse(
+//                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+//                request.getServletPath(),
+//                "An internal server error occurred");
+//    }
 }

@@ -14,6 +14,7 @@ import com.gmail.romkatsis.healthhubserver.models.*;
 import com.gmail.romkatsis.healthhubserver.repositories.ClinicAmenityRepository;
 import com.gmail.romkatsis.healthhubserver.repositories.ClinicRepository;
 import com.gmail.romkatsis.healthhubserver.repositories.ClinicSpecialisationRepository;
+import com.gmail.romkatsis.healthhubserver.utils.GoogleMapsApiUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,10 @@ public class ClinicService {
 
     private final ClinicAmenityRepository amenityRepository;
 
+    private final GoogleMapsApiUtils googleMapsApiUtils;
+
     @Autowired
-    public ClinicService(ClinicRepository clinicRepository, ModelMapper modelMapper, UserService userService, DoctorsDetailsService doctorsDetailsService, AuthenticationService authenticationService, ClinicSpecialisationRepository specialisationRepository, ClinicAmenityRepository amenityRepository) {
+    public ClinicService(ClinicRepository clinicRepository, ModelMapper modelMapper, UserService userService, DoctorsDetailsService doctorsDetailsService, AuthenticationService authenticationService, ClinicSpecialisationRepository specialisationRepository, ClinicAmenityRepository amenityRepository, GoogleMapsApiUtils googleMapsApiUtils) {
         this.clinicRepository = clinicRepository;
         this.modelMapper = modelMapper;
         this.userService = userService;
@@ -49,6 +52,7 @@ public class ClinicService {
         this.authenticationService = authenticationService;
         this.specialisationRepository = specialisationRepository;
         this.amenityRepository = amenityRepository;
+        this.googleMapsApiUtils = googleMapsApiUtils;
     }
 
     @Transactional
@@ -56,12 +60,13 @@ public class ClinicService {
         User user = userService.findUserById(userId);
         DoctorsDetails doctorsDetails = user.getDoctorsDetails();
         if (doctorsDetails.getClinic() != null) {
-            throw new UserResourceLimitExceededException("User already belongs to a clinic and cannot create his own");
+            throw new UserResourceLimitExceededException("User already belongs to a clinic and cannot create new one");
         }
 
         Clinic clinic = modelMapper.map(clinicInfo, Clinic.class);
         clinic.addDoctor(doctorsDetails);
         clinic.setAdmin(doctorsDetails);
+        clinic.setGoogleMapsPlaceId(findGoogleMapsPlaceId(clinicInfo));
         clinic.generateSecretCode();
         clinicRepository.save(clinic);
 
@@ -77,6 +82,11 @@ public class ClinicService {
     @Transactional
     public ClinicInfoResponse editClinicInfo(int clinicId, ClinicInfoRequest clinicInfo) {
         Clinic clinic = getClinicById(clinicId);
+        if (!clinic.getCity().equals(clinicInfo.getCity()) ||
+                !clinic.getAddress().equals(clinicInfo.getAddress())) {
+            clinic.setGoogleMapsPlaceId(findGoogleMapsPlaceId(clinicInfo));
+        }
+
         modelMapper.map(clinicInfo, clinic);
         return convertClinicToClinicInfoResponse(clinic);
     }
@@ -145,7 +155,7 @@ public class ClinicService {
         DoctorsDetails doctor = doctorsDetailsService.findDoctorsDetailsById(request.getDoctorId());
         if (doctor.getClinic() != null) {
             throw new UserResourceLimitExceededException(
-                    "Doctor already belongs to another clinic and cannot join this");
+                    "Doctor already belongs to clinic and cannot join this");
         }
 
         clinic.addDoctor(doctor);
@@ -176,6 +186,11 @@ public class ClinicService {
         clinic.addReview(doctorReview, user);
         clinicRepository.saveAndFlush(clinic);
         return clinic.getReviews();
+    }
+
+
+    private String findGoogleMapsPlaceId(ClinicInfoRequest request) {
+        return googleMapsApiUtils.getPlaceIdByAddress("ua", request.getCity(), request.getAddress());
     }
 
     private ClinicInfoResponse convertClinicToClinicInfoResponse(Clinic clinic) {

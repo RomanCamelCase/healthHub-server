@@ -112,7 +112,7 @@ public class ClinicController {
         return clinicService.addDoctor(id, request);
     }
 
-    @DeleteMapping("/{id/doctors}")
+    @DeleteMapping("/{id}/doctors")
     @ResponseStatus(HttpStatus.OK)
     //    @PreAuthorize("")
     public Set<DoctorInfoShortResponse> deleteDoctorFromClinic(@PathVariable int id,

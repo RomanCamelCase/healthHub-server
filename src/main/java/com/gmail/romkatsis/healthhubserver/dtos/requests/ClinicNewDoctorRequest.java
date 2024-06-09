@@ -1,7 +1,6 @@
 package com.gmail.romkatsis.healthhubserver.dtos.requests;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public class ClinicNewDoctorRequest {
