@@ -1,6 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.models;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Formula;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -75,6 +76,9 @@ public class Clinic {
 
     @OneToMany(mappedBy = "clinic", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<ClinicReview> reviews = new HashSet<>();
+
+    @Formula("(select round(coalesce(avg(r.rating + 0.0), 0), 2) from clinics_reviews r where r.clinic_id = id)")
+    private Double avgRating;
 
     public Clinic() {
     }
@@ -205,6 +209,14 @@ public class Clinic {
 
     public void setReviews(Set<ClinicReview> reviews) {
         this.reviews = reviews;
+    }
+
+    public Double getAvgRating() {
+        return avgRating;
+    }
+
+    public void setAvgRating(Double avgRating) {
+        this.avgRating = avgRating;
     }
 
     public String generateSecretCode() {

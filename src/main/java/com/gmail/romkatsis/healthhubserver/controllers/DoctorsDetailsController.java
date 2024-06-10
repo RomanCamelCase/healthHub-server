@@ -3,6 +3,7 @@ package com.gmail.romkatsis.healthhubserver.controllers;
 import com.gmail.romkatsis.healthhubserver.dtos.embedded.ReviewDto;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorsSearchResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.services.DoctorsDetailsService;
 import com.gmail.romkatsis.healthhubserver.services.ReviewService;
@@ -26,6 +27,12 @@ public class DoctorsDetailsController {
     public DoctorsDetailsController(DoctorsDetailsService doctorsDetailsService, ReviewService reviewService) {
         this.doctorsDetailsService = doctorsDetailsService;
         this.reviewService = reviewService;
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public DoctorsSearchResponse findDoctors(@RequestBody @Valid DoctorSearchRequest searchRequest) {
+        return doctorsDetailsService.findDoctorsBySearchRequest(searchRequest);
     }
 
     @PostMapping

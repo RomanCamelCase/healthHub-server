@@ -46,6 +46,8 @@ public class DoctorInfoResponse {
 
     private Set<ContactDto> contacts;
 
+    private Double rating;
+
     public DoctorInfoResponse() {
     }
 
@@ -183,5 +185,13 @@ public class DoctorInfoResponse {
 
     public void setContacts(Set<ContactDto> contacts) {
         this.contacts = contacts;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }

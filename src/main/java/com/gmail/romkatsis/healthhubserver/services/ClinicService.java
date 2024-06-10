@@ -1,10 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.services;
 
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.ClinicInfoResponse;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoShortResponse;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.SecretCodeResponse;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.*;
 import com.gmail.romkatsis.healthhubserver.enums.Role;
 import com.gmail.romkatsis.healthhubserver.exceptions.DataIntegrityException;
 import com.gmail.romkatsis.healthhubserver.exceptions.InvalidClinicSecretCodeException;
@@ -14,12 +11,19 @@ import com.gmail.romkatsis.healthhubserver.models.*;
 import com.gmail.romkatsis.healthhubserver.repositories.ClinicAmenityRepository;
 import com.gmail.romkatsis.healthhubserver.repositories.ClinicRepository;
 import com.gmail.romkatsis.healthhubserver.repositories.ClinicSpecialisationRepository;
+import com.gmail.romkatsis.healthhubserver.specifications.ClinicSpecification;
 import com.gmail.romkatsis.healthhubserver.utils.GoogleMapsApiUtils;
+import jakarta.persistence.EntityManager;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,8 +47,10 @@ public class ClinicService {
 
     private final GoogleMapsApiUtils googleMapsApiUtils;
 
+    private final EntityManager entityManager;
+
     @Autowired
-    public ClinicService(ClinicRepository clinicRepository, ModelMapper modelMapper, UserService userService, DoctorsDetailsService doctorsDetailsService, AuthenticationService authenticationService, ClinicSpecialisationRepository specialisationRepository, ClinicAmenityRepository amenityRepository, GoogleMapsApiUtils googleMapsApiUtils) {
+    public ClinicService(ClinicRepository clinicRepository, ModelMapper modelMapper, UserService userService, DoctorsDetailsService doctorsDetailsService, AuthenticationService authenticationService, ClinicSpecialisationRepository specialisationRepository, ClinicAmenityRepository amenityRepository, GoogleMapsApiUtils googleMapsApiUtils, EntityManager entityManager) {
         this.clinicRepository = clinicRepository;
         this.modelMapper = modelMapper;
         this.userService = userService;
@@ -53,6 +59,24 @@ public class ClinicService {
         this.specialisationRepository = specialisationRepository;
         this.amenityRepository = amenityRepository;
         this.googleMapsApiUtils = googleMapsApiUtils;
+        this.entityManager = entityManager;
+    }
+
+    public ClinicsSearchResponse findClinicsBySearchRequest(ClinicsSearchRequest searchRequest) {
+        Pageable pageable = PageRequest.of(searchRequest.getPageNumber(), searchRequest.getPageSize());
+
+        Specification<Clinic> clinicSpecification = ClinicSpecification.findBy(
+                searchRequest.getCity(),
+                specialisationRepository.findById(searchRequest.getSpecialisationId()).orElse(null),
+                searchRequest.getIsPrivate(),
+                amenityRepository.findAllByIdIn(searchRequest.getAmenitiesIds()),
+                searchRequest.getMinRating(),
+                searchRequest.getSortBy()
+        );
+
+        Page<Clinic> clinics = clinicRepository.findAll(clinicSpecification, pageable);
+        return new ClinicsSearchResponse(clinics.getTotalPages(), (int) clinics.getTotalElements(),
+                convertClinicToClinicInfoShortResponse(new LinkedHashSet<>(clinics.getContent())));
     }
 
     @Transactional
@@ -185,9 +209,9 @@ public class ClinicService {
         ClinicReview doctorReview = modelMapper.map(request, ClinicReview.class);
         clinic.addReview(doctorReview, user);
         clinicRepository.saveAndFlush(clinic);
+        entityManager.refresh(clinic);
         return clinic.getReviews();
     }
-
 
     private String findGoogleMapsPlaceId(ClinicInfoRequest request) {
         return googleMapsApiUtils.getPlaceIdByAddress("ua", request.getCity(), request.getAddress());
@@ -197,12 +221,13 @@ public class ClinicService {
         return modelMapper.map(clinic, ClinicInfoResponse.class);
     }
 
+    private LinkedHashSet<ClinicInfoShortResponse> convertClinicToClinicInfoShortResponse(LinkedHashSet<Clinic> clinics) {
+        return clinics.stream()
+                .map(clinic -> modelMapper.map(clinic, ClinicInfoShortResponse.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
     private Set<DoctorInfoShortResponse> convertDoctorsDetailsToDoctorInfoShortResponse(Set<DoctorsDetails> doctorsDetails) {
-        modelMapper.typeMap(DoctorsDetails.class, DoctorInfoShortResponse.class)
-                .addMapping(details -> details.getUser().getFirstName(),
-                        DoctorInfoShortResponse::setFirstName)
-                .addMapping(details -> details.getUser().getLastName(),
-                        DoctorInfoShortResponse::setLastName);
         return doctorsDetails.stream()
                 .map(d -> modelMapper.map(d, DoctorInfoShortResponse.class))
                 .collect(Collectors.toSet());

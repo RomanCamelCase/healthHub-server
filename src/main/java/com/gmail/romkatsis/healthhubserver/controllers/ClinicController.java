@@ -2,10 +2,7 @@ package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.embedded.ReviewDto;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.ClinicInfoResponse;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoShortResponse;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.SecretCodeResponse;
-import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.*;
 import com.gmail.romkatsis.healthhubserver.services.ClinicService;
 import com.gmail.romkatsis.healthhubserver.services.ReviewService;
 import jakarta.validation.Valid;
@@ -29,6 +26,12 @@ public class ClinicController {
     public ClinicController(ClinicService clinicService, ReviewService reviewService) {
         this.clinicService = clinicService;
         this.reviewService = reviewService;
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public ClinicsSearchResponse findClinics(@RequestBody @Valid ClinicsSearchRequest searchRequest) {
+        return clinicService.findClinicsBySearchRequest(searchRequest);
     }
 
     @PostMapping

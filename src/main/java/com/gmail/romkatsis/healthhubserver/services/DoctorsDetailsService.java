@@ -2,6 +2,8 @@ package com.gmail.romkatsis.healthhubserver.services;
 
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoShortResponse;
+import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorsSearchResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.enums.Role;
 import com.gmail.romkatsis.healthhubserver.exceptions.ResourceNotFoundException;
@@ -9,13 +11,22 @@ import com.gmail.romkatsis.healthhubserver.exceptions.UserResourceLimitExceededE
 import com.gmail.romkatsis.healthhubserver.models.*;
 import com.gmail.romkatsis.healthhubserver.repositories.DoctorSpecialisationRepository;
 import com.gmail.romkatsis.healthhubserver.repositories.DoctorsDetailsRepository;
+import com.gmail.romkatsis.healthhubserver.specifications.DoctorSpecification;
 import com.gmail.romkatsis.healthhubserver.utils.GoogleMapsApiUtils;
+import jakarta.persistence.EntityManager;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,18 +44,39 @@ public class DoctorsDetailsService {
 
     private final GoogleMapsApiUtils googleMapsApiUtils;
 
+    private final EntityManager entityManager;
+
     @Autowired
     public DoctorsDetailsService(DoctorsDetailsRepository doctorsDetailsRepository,
                                  DoctorSpecialisationRepository specialisationRepository,
                                  UserService userService,
                                  AuthenticationService authenticationService,
-                                 ModelMapper modelMapper, GoogleMapsApiUtils googleMapsApiUtils) {
+                                 ModelMapper modelMapper, GoogleMapsApiUtils googleMapsApiUtils, EntityManager entityManager) {
         this.doctorsDetailsRepository = doctorsDetailsRepository;
         this.specialisationRepository = specialisationRepository;
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.modelMapper = modelMapper;
         this.googleMapsApiUtils = googleMapsApiUtils;
+        this.entityManager = entityManager;
+    }
+
+    public DoctorsSearchResponse findDoctorsBySearchRequest(DoctorSearchRequest searchRequest) {
+        Pageable pageable = PageRequest.of(searchRequest.getPageNumber(), searchRequest.getPageSize());
+
+        Specification<DoctorsDetails> doctorSpecification = DoctorSpecification.findBy(
+                searchRequest.getCity(),
+                specialisationRepository.findById(searchRequest.getSpecialisationId()).orElse(null),
+                searchRequest.getWorkWith(),
+                LocalDate.now().minusYears(searchRequest.getWorkExperienceYears()),
+                searchRequest.getGender(),
+                searchRequest.getMinRating(),
+                searchRequest.getSortBy()
+        );
+
+        Page<DoctorsDetails> doctorsPage = doctorsDetailsRepository.findAll(doctorSpecification, pageable);
+        return new DoctorsSearchResponse(doctorsPage.getTotalPages(), (int) doctorsPage.getTotalElements(),
+                convertDoctorsDetailsToDoctorInfoShortResponse(new LinkedHashSet<>(doctorsPage.getContent())));
     }
 
     public DoctorsDetails findDoctorsDetailsById(int id) {
@@ -133,6 +165,7 @@ public class DoctorsDetailsService {
         DoctorReview doctorReview = modelMapper.map(request, DoctorReview.class);
         doctorsDetails.addReview(doctorReview, user);
         doctorsDetailsRepository.saveAndFlush(doctorsDetails);
+        entityManager.refresh(doctorsDetails);
         return doctorsDetails.getReviews();
     }
 
@@ -141,15 +174,12 @@ public class DoctorsDetailsService {
     }
 
     private DoctorInfoResponse convertDoctorDetailsToDoctorInfoResponse(DoctorsDetails doctorsDetails) {
-        modelMapper.typeMap(DoctorsDetails.class, DoctorInfoResponse.class)
-                .addMapping(doctor -> doctor.getUser().getFirstName(),
-                        DoctorInfoResponse::setFirstName)
-                .addMapping(doctor -> doctor.getUser().getLastName(),
-                        DoctorInfoResponse::setLastName)
-                .addMapping(doctor -> doctor.getUser().getGender(),
-                        DoctorInfoResponse::setGender)
-                .addMapping(doctor -> doctor.getUser().getRegistrationDate(),
-                        DoctorInfoResponse::setRegistrationDate);
         return modelMapper.map(doctorsDetails, DoctorInfoResponse.class);
+    }
+
+    private LinkedHashSet<DoctorInfoShortResponse> convertDoctorsDetailsToDoctorInfoShortResponse(LinkedHashSet<DoctorsDetails> doctorsDetails) {
+        return doctorsDetails.stream()
+                .map(d -> modelMapper.map(d, DoctorInfoShortResponse.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

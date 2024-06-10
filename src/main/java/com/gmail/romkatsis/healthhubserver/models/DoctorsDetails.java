@@ -3,6 +3,7 @@ package com.gmail.romkatsis.healthhubserver.models;
 import com.gmail.romkatsis.healthhubserver.enums.DoctorQualificationCategory;
 import com.gmail.romkatsis.healthhubserver.enums.PatientType;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -74,6 +75,9 @@ public class DoctorsDetails {
 
     @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DoctorReview> reviews = new HashSet<>();
+
+    @Formula("(select round(coalesce(avg(r.rating + 0.0), 0), 2) from doctors_reviews r where r.doctor_id = user_id)")
+    private Double avgRating;
 
     public DoctorsDetails() {
     }
@@ -204,6 +208,14 @@ public class DoctorsDetails {
 
     public void setReviews(Set<DoctorReview> reviews) {
         this.reviews = reviews;
+    }
+
+    public Double getAvgRating() {
+        return avgRating;
+    }
+
+    public void setAvgRating(Double avgRating) {
+        this.avgRating = avgRating;
     }
 
     public void addSpecialisation(DoctorSpecialisation specialisation) {

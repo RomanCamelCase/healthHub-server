@@ -80,11 +80,6 @@ public class SavedDoctorsAndClinicsService {
     }
 
     private Set<DoctorInfoShortResponse> convertDoctorsDetailsToDoctorInfoShortResponse(Set<DoctorsDetails> doctorsDetails) {
-        modelMapper.typeMap(DoctorsDetails.class, DoctorInfoShortResponse.class)
-                .addMapping(details -> details.getUser().getFirstName(),
-                        DoctorInfoShortResponse::setFirstName)
-                .addMapping(details -> details.getUser().getLastName(),
-                        DoctorInfoShortResponse::setLastName);
         return doctorsDetails.stream()
                 .map(d -> modelMapper.map(d, DoctorInfoShortResponse.class))
                 .collect(Collectors.toSet());

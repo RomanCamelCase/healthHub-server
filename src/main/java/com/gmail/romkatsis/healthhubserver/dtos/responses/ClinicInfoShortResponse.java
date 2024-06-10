@@ -8,6 +8,10 @@ public class ClinicInfoShortResponse {
 
     private String address;
 
+    private Boolean isPrivate;
+
+    private Double rating;
+
     public ClinicInfoShortResponse() {
     }
 
@@ -33,5 +37,21 @@ public class ClinicInfoShortResponse {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Boolean getPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(Boolean aPrivate) {
+        isPrivate = aPrivate;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }

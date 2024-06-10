@@ -31,6 +31,8 @@ public class ClinicInfoResponse {
 
     private Set<ClinicAmenityDto> amenities;
 
+    private Double rating;
+
     public ClinicInfoResponse() {}
 
     public int getId() {
@@ -119,5 +121,13 @@ public class ClinicInfoResponse {
 
     public void setAmenities(Set<ClinicAmenityDto> amenities) {
         this.amenities = amenities;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }

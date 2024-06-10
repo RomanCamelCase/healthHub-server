@@ -17,6 +17,8 @@ public class DoctorInfoShortResponse {
 
     private Set<SpecialisationDto> specialisations;
 
+    private Double rating;
+
     public DoctorInfoShortResponse() {
     }
 
@@ -58,5 +60,13 @@ public class DoctorInfoShortResponse {
 
     public void setSpecialisations(Set<SpecialisationDto> specialisations) {
         this.specialisations = specialisations;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }
