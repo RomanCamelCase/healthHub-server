@@ -167,16 +167,21 @@ public class ClinicService {
         return convertDoctorsDetailsToDoctorInfoShortResponse(clinic.getDoctors());
     }
 
+    public boolean isAdministratorBelongToClinic(int adminId, int clinicId) {
+        Clinic clinic = getClinicById(clinicId);
+        return clinic.getAdmin().getUserId() == adminId;
+    }
+
     @Transactional
-    public Set<DoctorInfoShortResponse> addDoctor(int clinicId, ClinicNewDoctorRequest request) {
+    public Set<DoctorInfoShortResponse> addDoctor(int clinicId, int doctorId, TokenRequest request) {
         Clinic clinic = getClinicById(clinicId);
 
-        if (!clinic.getSecretCode().equals(request.getSecretCode())) {
+        if (!clinic.getSecretCode().equals(request.getToken())) {
             throw new InvalidCodeException(
                     "Your secret code is incorrect. Please contact the clinic administrator.");
         }
 
-        DoctorsDetails doctor = doctorsDetailsService.findDoctorsDetailsById(request.getDoctorId());
+        DoctorsDetails doctor = doctorsDetailsService.findDoctorsDetailsById(doctorId);
         if (doctor.getClinic() != null) {
             throw new UserResourceLimitExceededException(
                     "Doctor already belongs to clinic and cannot join this");

@@ -8,6 +8,7 @@ import com.gmail.romkatsis.healthhubserver.services.ReviewService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -108,18 +109,21 @@ public class ClinicController {
         return clinicService.getDoctorsByClinicId(id);
     }
 
-    @PostMapping("/{id}/doctors")
+    @PostMapping("/{id}/doctors/{doctorId}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#doctorId == new Integer(principal.username)")
     public Set<DoctorInfoShortResponse> addDoctorToClinic(@PathVariable int id,
-                                                          @RequestBody @Valid ClinicNewDoctorRequest request) {
-        return clinicService.addDoctor(id, request);
+                                                          @PathVariable int doctorId,
+                                                          @RequestBody @Valid TokenRequest request) {
+        return clinicService.addDoctor(id, doctorId, request);
     }
 
-    @DeleteMapping("/{id}/doctors")
+    @DeleteMapping("/{id}/doctors/{doctorId}")
     @ResponseStatus(HttpStatus.OK)
-    //    @PreAuthorize("")
+    @PreAuthorize("(#doctorId == new Integer(principal.username)) or " +
+            "@clinicService.isAdministratorBelongToClinic(new Integer(principal.username), #id)")
     public Set<DoctorInfoShortResponse> deleteDoctorFromClinic(@PathVariable int id,
-                                                               @RequestParam int doctorId) {
+                                                               @PathVariable int doctorId) {
         return clinicService.removeDoctor(id, doctorId);
     }
 

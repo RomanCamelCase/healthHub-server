@@ -7,6 +7,7 @@ import com.gmail.romkatsis.healthhubserver.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
@@ -86,13 +88,34 @@ public class SpringSecurityConfiguration {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/v1/auth/**").permitAll()
                                 .requestMatchers("/error").permitAll()
+
                                 .requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/doctors/*").permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers("/api/v1/user", "/api/v1/user/**").hasRole("CUSTOMER")
+
+                                .requestMatchers(HttpMethod.POST, "api/v1/doctors",
+                                        "api/v1/doctors/*/reviews").hasRole("CUSTOMER")
+                                .requestMatchers(HttpMethod.GET, "/api/v1/doctors", "/api/v1/doctors/*",
+                                        "/api/v1/doctors/*/reviews").permitAll()
+                                .requestMatchers("api/v1/doctors", "api/v1/doctors/**").hasRole("DOCTOR")
+
+                                .requestMatchers(HttpMethod.GET, "api/v1/clinics", "api/v1/clinics/*",
+                                        "api/v1/clinics/*/reviews", "api/v1/clinics/*/doctors").permitAll()
+                                .requestMatchers(HttpMethod.POST, "api/v1/clinics/*/reviews").hasRole("CUSTOMER")
+                                .requestMatchers(HttpMethod.POST, "api/v1/clinics",
+                                        "api/v1/clinics/*/doctors/*").hasRole("DOCTOR")
+                                .requestMatchers(HttpMethod.DELETE,
+                                        "api/v1/clinics/*/doctors/*").hasAnyRole("DOCTOR","CLINIC_ADMINISTRATOR")
+                                .requestMatchers("api/v1/clinics", "api/v1/clinics/**").hasRole("CLINIC_ADMINISTRATOR")
+                                .anyRequest().denyAll()
                 );
         http.addFilterBefore(chainExceptionHandlerFilter, LogoutFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
+    @Bean
+    @Profile("test")
+    public WebSecurityCustomizer webSecurity() {
+        return web -> web.ignoring().requestMatchers("/v3/api-docs/**", "/swagger-ui/**");
+    }
 }
