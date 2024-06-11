@@ -27,8 +27,6 @@ spring:
           starttls:
             enable: true
 
-
-
 auth:
   tokens:
     access-token:
@@ -36,15 +34,14 @@ auth:
       duration: 900000
     refresh-token:
       duration: 172800000
-
-authorities:
-  tokens:
     refresh-password-token:
       duration: 3600000
 
 google:
   maps:
     api-key: ${GOOGLE_MAPS_API_KEY}
+
+
 
 ---
 

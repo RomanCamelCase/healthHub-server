@@ -50,7 +50,7 @@ public class ClinicController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    //    @PreAuthorize("")
+    @PreAuthorize("@clinicService.isAdministratorBelongToClinic(new Integer(principal.username), #id)")
     public ClinicInfoResponse editClinicInfo(@PathVariable int id,
                                              @RequestBody @Valid ClinicInfoRequest clinicInfo) {
         return clinicService.editClinicInfo(id, clinicInfo);
@@ -58,7 +58,7 @@ public class ClinicController {
 
     @PutMapping("/{id}/specialisations")
     @ResponseStatus(HttpStatus.OK)
-    //    @PreAuthorize("")
+    @PreAuthorize("@clinicService.isAdministratorBelongToClinic(new Integer(principal.username), #id)")
     public ClinicInfoResponse editClinicSpecialisations(@PathVariable int id,
                                                         @RequestBody @Valid SpecialisationsRequest specialisations) {
         return clinicService.editClinicSpecialisations(id, specialisations);
@@ -66,7 +66,7 @@ public class ClinicController {
 
     @PutMapping("/{id}/working-days")
     @ResponseStatus(HttpStatus.OK)
-    //    @PreAuthorize("")
+    @PreAuthorize("@clinicService.isAdministratorBelongToClinic(new Integer(principal.username), #id)")
     public ClinicInfoResponse editClinicWorkingDays(@PathVariable int id,
                                                     @RequestBody @Valid WorkingDaysRequest workingDays) {
         return clinicService.editClinicWorkingDays(id, workingDays);
@@ -74,7 +74,7 @@ public class ClinicController {
 
     @PutMapping("/{id}/amenities")
     @ResponseStatus(HttpStatus.OK)
-    //    @PreAuthorize("")
+    @PreAuthorize("@clinicService.isAdministratorBelongToClinic(new Integer(principal.username), #id)")
     public ClinicInfoResponse editClinicAmenities(@PathVariable int id,
                                                   @RequestBody @Valid AmenitiesRequest amenities) {
         return clinicService.editClinicAmenities(id, amenities);
@@ -82,7 +82,7 @@ public class ClinicController {
 
     @PostMapping("/{id}/contacts")
     @ResponseStatus(HttpStatus.CREATED)
-    //    @PreAuthorize("")
+    @PreAuthorize("@clinicService.isAdministratorBelongToClinic(new Integer(principal.username), #id)")
     public ClinicInfoResponse addClinicContact(@PathVariable int id,
                                                @RequestBody @Valid ContactRequest contact) {
         return clinicService.addClinicContact(id, contact);
@@ -90,7 +90,7 @@ public class ClinicController {
 
     @DeleteMapping("/{id}/contacts")
     @ResponseStatus(HttpStatus.OK)
-    //    @PreAuthorize("")
+    @PreAuthorize("@clinicService.isAdministratorBelongToClinic(new Integer(principal.username), #id)")
     public ClinicInfoResponse deleteClinicContact(@PathVariable int id,
                                                   @RequestParam @Valid int contactId) {
         return clinicService.removeClinicContact(id, contactId);
@@ -98,7 +98,7 @@ public class ClinicController {
 
     @GetMapping("/{id}/secret-code")
     @ResponseStatus(HttpStatus.OK)
-    //    @PreAuthorize("")
+    @PreAuthorize("@clinicService.isAdministratorBelongToClinic(new Integer(principal.username), #id)")
     public SecretCodeResponse getClinicSecretCode(@PathVariable int id) {
         return clinicService.getClinicSecretCode(id);
     }

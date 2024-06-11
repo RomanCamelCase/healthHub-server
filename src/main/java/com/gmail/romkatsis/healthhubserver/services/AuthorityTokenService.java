@@ -34,7 +34,7 @@ public class AuthorityTokenService {
     @Autowired
     public AuthorityTokenService(AuthorityTokenRepository authorityTokenRepository,
                                  UserService userService,
-                                 @Value("${authorities.tokens.refresh-password-token.duration}") int refreshPasswordTokenDuration, EmailService emailService, PasswordEncoder passwordEncoder) {
+                                 @Value("${auth.tokens.refresh-password-token.duration}") int refreshPasswordTokenDuration, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.authorityTokenRepository = authorityTokenRepository;
         this.userService = userService;
         this.refreshPasswordTokenDuration = refreshPasswordTokenDuration;
