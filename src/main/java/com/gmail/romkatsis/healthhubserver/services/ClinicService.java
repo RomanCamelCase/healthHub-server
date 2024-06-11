@@ -4,7 +4,7 @@ import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.*;
 import com.gmail.romkatsis.healthhubserver.enums.Role;
 import com.gmail.romkatsis.healthhubserver.exceptions.DataIntegrityException;
-import com.gmail.romkatsis.healthhubserver.exceptions.InvalidClinicSecretCodeException;
+import com.gmail.romkatsis.healthhubserver.exceptions.InvalidCodeException;
 import com.gmail.romkatsis.healthhubserver.exceptions.ResourceNotFoundException;
 import com.gmail.romkatsis.healthhubserver.exceptions.UserResourceLimitExceededException;
 import com.gmail.romkatsis.healthhubserver.models.*;
@@ -172,7 +172,7 @@ public class ClinicService {
         Clinic clinic = getClinicById(clinicId);
 
         if (!clinic.getSecretCode().equals(request.getSecretCode())) {
-            throw new InvalidClinicSecretCodeException(
+            throw new InvalidCodeException(
                     "Your secret code is incorrect. Please contact the clinic administrator.");
         }
 

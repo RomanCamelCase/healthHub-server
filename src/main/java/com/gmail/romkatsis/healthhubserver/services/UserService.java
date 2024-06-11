@@ -39,6 +39,11 @@ public class UserService {
                 new ResourceNotFoundException("User by id %s not found".formatted(id)));
     }
 
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException("User by email %s not found".formatted(email)));
+    }
+
     public CurrentUserInfoResponse getUserInfoById(int id) {
         User user = findUserById(id);
         return convertUserToCurrentUserResponse(user);

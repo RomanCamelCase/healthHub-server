@@ -155,3 +155,9 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: "db/changelog/v.1.0/2024-06-07-clinics_reviews_table-doctors_reviews_table-add-posted_at_column.sql"
+  - changeSet:
+      id: 26
+      author: Roman K
+      changes:
+        - sqlFile:
+            path: "db/changelog/v.1.0/2024-06-11-authority_tokens_table-create.sql"

@@ -2,10 +2,7 @@ package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.responses.PlainErrorResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.ValidationErrorResponse;
-import com.gmail.romkatsis.healthhubserver.exceptions.DataIntegrityException;
-import com.gmail.romkatsis.healthhubserver.exceptions.EmailAlreadyRegisteredException;
-import com.gmail.romkatsis.healthhubserver.exceptions.InvalidClinicSecretCodeException;
-import com.gmail.romkatsis.healthhubserver.exceptions.ResourceNotFoundException;
+import com.gmail.romkatsis.healthhubserver.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -70,7 +67,7 @@ public class ExceptionController {
                 "Cannot read request content");
     }
 
-    @ExceptionHandler({DataIntegrityException.class, InvalidClinicSecretCodeException.class})
+    @ExceptionHandler({DataIntegrityException.class, InvalidCodeException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public PlainErrorResponse handleDataIntegrityError(RuntimeException exception,
                                                        HttpServletRequest request) {
@@ -100,13 +97,22 @@ public class ExceptionController {
                 request.getServletPath(),
                 exception.getMessage());
     }
-//
-//    @ExceptionHandler(RuntimeException.class)
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public PlainErrorResponse handleUnexpectedError(HttpServletRequest request) {
-//        return new PlainErrorResponse(
-//                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-//                request.getServletPath(),
-//                "An internal server error occurred");
-//    }
+
+    @ExceptionHandler(CanNotSendMailException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public PlainErrorResponse handleUnexpectedError(HttpServletRequest request, RuntimeException exception) {
+        return new PlainErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                request.getServletPath(),
+                exception.getMessage());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public PlainErrorResponse handleUnexpectedError(HttpServletRequest request) {
+        return new PlainErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                request.getServletPath(),
+                "An internal server error occurred");
+    }
 }

@@ -1,7 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.services;
 
 import com.gmail.romkatsis.healthhubserver.dtos.requests.LoginRequest;
-import com.gmail.romkatsis.healthhubserver.dtos.requests.RefreshTokenRequest;
+import com.gmail.romkatsis.healthhubserver.dtos.requests.TokenRequest;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.TokensResponse;
 import com.gmail.romkatsis.healthhubserver.models.RefreshToken;
 import com.gmail.romkatsis.healthhubserver.models.User;
@@ -43,13 +43,13 @@ public class AuthenticationService {
         return generateTokensByUser(user);
     }
 
-    public TokensResponse refreshUserTokens(RefreshTokenRequest refreshTokenRequest) {
-        User user = refreshTokenService.verifyToken(refreshTokenRequest.getRefreshToken());
+    public TokensResponse refreshUserTokens(TokenRequest refreshTokenRequest) {
+        User user = refreshTokenService.verifyToken(refreshTokenRequest.getToken());
         return generateTokensByUser(user);
     }
 
-    public void logOut(RefreshTokenRequest refreshTokenRequest, boolean fromAllDevices) {
-        User user = refreshTokenService.verifyToken(refreshTokenRequest.getRefreshToken());
+    public void logOut(TokenRequest refreshTokenRequest, boolean fromAllDevices) {
+        User user = refreshTokenService.verifyToken(refreshTokenRequest.getToken());
 
         if (fromAllDevices) {
             refreshTokenService.removeAllTokensByUser(user);
