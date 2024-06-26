@@ -72,7 +72,7 @@ public class AuthorityTokenService {
     private String generatePasswordResetBodyText(User user, AuthorityToken authorityToken) {
         StringBuilder passwordResetBodyText = new StringBuilder();
         passwordResetBodyText.append(user.getGender() == Gender.MALE ? "Шановний" : "Шановна");
-        passwordResetBodyText.append("%s %s".formatted(user.getFirstName(), user.getLastName()));
+        passwordResetBodyText.append(" %s %s. ".formatted(user.getFirstName(), user.getLastName()));
         passwordResetBodyText.append("Ви надіслали запит на скидання пароля. " +
                 "Будь ласка, використовуйте код нижче, щоб змінити свій пароль:\n%s"
                         .formatted(authorityToken.getToken()));

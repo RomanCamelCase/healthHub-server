@@ -30,6 +30,7 @@ public class DoctorSpecification {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(criteriaBuilder.equal(root.get("city"), city));
             predicates.add(criteriaBuilder.isMember(specialisation, root.get("specialisations")));
+            predicates.add(criteriaBuilder.equal(root.get("isActive"), true));
             if (workWith != null) predicates.add(criteriaBuilder
                     .equal(root.get("workWith"), workWith));
             if (workExperience != null) predicates.add(criteriaBuilder

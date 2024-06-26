@@ -23,7 +23,7 @@ public class UserInfoRequest {
 
     @NotNull
     @Past
-    private LocalDate dateOfBirth;
+    private LocalDate birthDate;
 
     public UserInfoRequest() {}
 
@@ -51,11 +51,11 @@ public class UserInfoRequest {
         this.gender = gender;
     }
 
-    public @NotNull @Past LocalDate getDateOfBirth() {
-        return dateOfBirth;
+    public @NotNull @Past LocalDate getBirthDate() {
+        return birthDate;
     }
 
-    public void setDateOfBirth(@NotNull @Past LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public void setBirthDate(@NotNull @Past LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 }

@@ -102,7 +102,7 @@ public class SpringSecurityConfiguration {
                                         "api/v1/clinics/*/reviews", "api/v1/clinics/*/doctors").permitAll()
                                 .requestMatchers(HttpMethod.POST, "api/v1/clinics/*/reviews").hasRole("CUSTOMER")
                                 .requestMatchers(HttpMethod.POST, "api/v1/clinics",
-                                        "api/v1/clinics/*/doctors/*").hasRole("DOCTOR")
+                                        "api/v1/clinics/*/doctors/*", "api/v1/clinics/join").hasRole("DOCTOR")
                                 .requestMatchers(HttpMethod.DELETE,
                                         "api/v1/clinics/*/doctors/*").hasAnyRole("DOCTOR","CLINIC_ADMINISTRATOR")
                                 .requestMatchers("api/v1/clinics", "api/v1/clinics/**").hasRole("CLINIC_ADMINISTRATOR")

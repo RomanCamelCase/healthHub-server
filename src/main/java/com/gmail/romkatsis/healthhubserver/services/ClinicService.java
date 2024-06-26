@@ -1,5 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.services;
 
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.ClinicAmenityDto;
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.SpecialisationDto;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.*;
 import com.gmail.romkatsis.healthhubserver.enums.Role;
@@ -188,6 +190,7 @@ public class ClinicService {
         }
 
         clinic.addDoctor(doctor);
+        clinic.generateSecretCode();
         return convertDoctorsDetailsToDoctorInfoShortResponse(clinic.getDoctors());
     }
 
@@ -235,6 +238,18 @@ public class ClinicService {
     private Set<DoctorInfoShortResponse> convertDoctorsDetailsToDoctorInfoShortResponse(Set<DoctorsDetails> doctorsDetails) {
         return doctorsDetails.stream()
                 .map(d -> modelMapper.map(d, DoctorInfoShortResponse.class))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<ClinicAmenityDto> getClinicsAmenities() {
+        return amenityRepository.findAll().stream()
+                .map(amenity -> modelMapper.map(amenity, ClinicAmenityDto.class))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<SpecialisationDto> getClinicsSpecialisations() {
+        return specialisationRepository.findAll().stream()
+                .map(specialisation -> modelMapper.map(specialisation, SpecialisationDto.class))
                 .collect(Collectors.toSet());
     }
 }

@@ -1,6 +1,8 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.ClinicAmenityDto;
 import com.gmail.romkatsis.healthhubserver.dtos.embedded.ReviewDto;
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.SpecialisationDto;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.*;
 import com.gmail.romkatsis.healthhubserver.services.ClinicService;
@@ -31,7 +33,7 @@ public class ClinicController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ClinicsSearchResponse findClinics(@RequestBody @Valid ClinicsSearchRequest searchRequest) {
+    public ClinicsSearchResponse findClinics(@Valid ClinicsSearchRequest searchRequest) {
         return clinicService.findClinicsBySearchRequest(searchRequest);
     }
 
@@ -144,4 +146,17 @@ public class ClinicController {
     public Set<ReviewDto> getClinicReviews(@PathVariable int id) {
         return reviewService.getClinicReviews(id);
     }
+
+    @GetMapping("/specialisations")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<SpecialisationDto> getClinicsSpecialisationsList() {
+        return clinicService.getClinicsSpecialisations();
+    }
+
+    @GetMapping("/amenities")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<ClinicAmenityDto> getClinicsAmenitiesList() {
+        return clinicService.getClinicsAmenities();
+    }
+
 }

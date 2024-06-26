@@ -1,5 +1,6 @@
 package com.gmail.romkatsis.healthhubserver.services;
 
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.SpecialisationDto;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoShortResponse;
@@ -154,7 +155,7 @@ public class DoctorsDetailsService {
     @Transactional
     public DoctorInfoResponse editDoctorStatus(int doctorId, DoctorStatusRequest request) {
         DoctorsDetails doctorsDetails = findDoctorsDetailsById(doctorId);
-        doctorsDetails.setActive(request.isActive());
+        doctorsDetails.setActive(request.getActive());
         return convertDoctorDetailsToDoctorInfoResponse(doctorsDetails);
     }
 
@@ -181,5 +182,11 @@ public class DoctorsDetailsService {
         return doctorsDetails.stream()
                 .map(d -> modelMapper.map(d, DoctorInfoShortResponse.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    public Set<SpecialisationDto> getDoctorsSpecialisations() {
+        return specialisationRepository.findAll().stream()
+                .map(specialisation -> modelMapper.map(specialisation, SpecialisationDto.class))
+                .collect(Collectors.toSet());
     }
 }

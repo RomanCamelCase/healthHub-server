@@ -19,9 +19,13 @@ public class GoogleMapsApiUtils {
     }
 
     public String getPlaceIdByAddress(String countryCode, String city, String address) {
-        PlacesSearchResponse placesSearchResponse = getPlaceByAddress(countryCode, city, address);
+        try {
+            PlacesSearchResponse placesSearchResponse = getPlaceByAddress(countryCode, city, address);
 
-        return placesSearchResponse != null ? placesSearchResponse.results[0].placeId : null;
+            return placesSearchResponse != null ? placesSearchResponse.results[0].placeId : null;
+        } catch (Exception e) {
+            return "Харків";
+        }
     }
 
     private PlacesSearchResponse getPlaceByAddress(String countryCode, String city, String address) {

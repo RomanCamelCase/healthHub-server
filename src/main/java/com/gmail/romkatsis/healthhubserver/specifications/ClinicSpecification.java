@@ -41,7 +41,7 @@ public class ClinicSpecification {
             query.orderBy(switch (sortBy) {
                 case "reviewsAmount" -> {
                     Join<Clinic, ClinicReview> clinicReviews = root.join("reviews", JoinType.LEFT);
-                    query.groupBy(root.get("id"));
+                    query.groupBy(root);
                     yield criteriaBuilder.desc(criteriaBuilder.count(clinicReviews));
                 }
                 default -> criteriaBuilder.desc(root.get("avgRating"));

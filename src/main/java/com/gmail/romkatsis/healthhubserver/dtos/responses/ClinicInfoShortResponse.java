@@ -1,5 +1,9 @@
 package com.gmail.romkatsis.healthhubserver.dtos.responses;
 
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.SpecialisationDto;
+
+import java.util.Set;
+
 public class ClinicInfoShortResponse {
 
     private int id;
@@ -11,6 +15,8 @@ public class ClinicInfoShortResponse {
     private Boolean isPrivate;
 
     private Double rating;
+
+    private Set<SpecialisationDto> specialisations;
 
     public ClinicInfoShortResponse() {
     }
@@ -53,5 +59,13 @@ public class ClinicInfoShortResponse {
 
     public void setRating(Double rating) {
         this.rating = rating;
+    }
+
+    public Set<SpecialisationDto> getSpecialisations() {
+        return specialisations;
+    }
+
+    public void setSpecialisations(Set<SpecialisationDto> specialisations) {
+        this.specialisations = specialisations;
     }
 }

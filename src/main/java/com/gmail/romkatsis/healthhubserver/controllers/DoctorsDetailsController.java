@@ -1,6 +1,7 @@
 package com.gmail.romkatsis.healthhubserver.controllers;
 
 import com.gmail.romkatsis.healthhubserver.dtos.embedded.ReviewDto;
+import com.gmail.romkatsis.healthhubserver.dtos.embedded.SpecialisationDto;
 import com.gmail.romkatsis.healthhubserver.dtos.requests.*;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorInfoResponse;
 import com.gmail.romkatsis.healthhubserver.dtos.responses.DoctorsSearchResponse;
@@ -31,7 +32,7 @@ public class DoctorsDetailsController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public DoctorsSearchResponse findDoctors(@RequestBody @Valid DoctorSearchRequest searchRequest) {
+    public DoctorsSearchResponse findDoctors(@Valid DoctorSearchRequest searchRequest) {
         return doctorsDetailsService.findDoctorsBySearchRequest(searchRequest);
     }
 
@@ -90,7 +91,7 @@ public class DoctorsDetailsController {
     @PutMapping("/{id}/specialisations")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("#id == new Integer(principal.username)")
-    public DoctorInfoResponse editDoctorWorkingDays(@PathVariable int id,
+    public DoctorInfoResponse editDoctorSpecialisations(@PathVariable int id,
                                                     @RequestBody @Valid SpecialisationsRequest specialisations) {
         return doctorsDetailsService.editDoctorSpecialisations(id, specialisations);
     }
@@ -110,5 +111,11 @@ public class DoctorsDetailsController {
     @ResponseStatus(HttpStatus.OK)
     public Set<ReviewDto> getDoctorReviews(@PathVariable int id) {
         return reviewService.getDoctorReview(id);
+    }
+
+    @GetMapping("/specialisations")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<SpecialisationDto> getDoctorsSpecialisationsList() {
+        return doctorsDetailsService.getDoctorsSpecialisations();
     }
 }

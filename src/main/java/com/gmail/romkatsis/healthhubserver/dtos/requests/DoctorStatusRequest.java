@@ -5,16 +5,16 @@ import jakarta.validation.constraints.NotNull;
 public class DoctorStatusRequest {
 
     @NotNull
-    private boolean isActive;
+    private boolean active;
 
     public DoctorStatusRequest() {
     }
 
-    public boolean isActive() {
-        return isActive;
+    public boolean getActive() {
+        return active;
     }
 
     public void setActive(boolean active) {
-        isActive = active;
+        this.active = active;
     }
 }
