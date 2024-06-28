@@ -1,4 +1,5 @@
 
+
 ![Logo](/demo/logo.png)
 
 
@@ -8,7 +9,10 @@ Server side of a simple service for finding doctors and private clinics. Current
 
 ## Demo
 
-![Demo](/demo/demo.mp4)
+
+https://github.com/RomanCamelCase/healthHub-server/assets/146123262/8a84c2ed-4042-42b2-a212-3d9c7e23d6ba
+
+
 
 ## TODO
 
